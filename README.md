@@ -2,7 +2,7 @@
 ## A tool to associate job text with standard occupational classifications
 Given a job title, job description, and job sector the algorithm assigns a 3-digit standard occupational classification (SOC) code to the job. The algorithm uses the SOC 2010 standard, which can be found at WEBSITE.
 
-This code should be cited as ...
+This code originally written by Jyldyz Djumalieva, Arthur Turrell, and David Copple.
 
 ### Testing
 The test matches to SOC are run on a file of example jobs, in this case job vacancies.

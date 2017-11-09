@@ -1,0 +1,220 @@
+Word,Frequency,Replace,Replace_with
+rgn,233,1,registered general nurse
+ifa,185,1,independent financial adviser
+ks2,166,1,key stage 2 teacher
+b2b,160,1,business to business
+nqt,137,1,newly qualified teacher
+charity,118,1,charity fundraiser
+nhs,113,1,national health services
+ks1,104,1,key stage 1 teacher
+flt,88,1,fork lift truck
+ce,78,1,community employment
+rmn,72,1,registered mental nurse
+eyfs,68,1,early years foundation stage teacher
+rta,68,1,road traffic accident
+mi,64,1,management information
+ux,61,1,computer user experience
+me,61,1,mechanical engineer
+pmo,57,1,project management office
+cscs,55,1,construction skills certification scheme
+ppa,55,1,planning preparation and assessment teacher
+devops,54,1,development operations
+bdm,47,1,business development manager
+commis,46,1,commission
+fmcg,45,1,consumer goods
+hca,43,1,home care assistant
+hnw,42,1,high net worth
+nav,38,1,enterprise resource planning software 
+fpa,38,1,financial planning and analysis
+fe,38,1,front end
+gcse,36,1,certificate secondary education
+ea,36,1,executive assistant
+mfl,33,1,foreign language
+asd,32,1,special needs
+rgnrmn,31,1,registered general nurse registered mental nurse
+snr,31,1,senior
+odp,29,1,operating room
+gp,29,1,physician
+msk,29,1,musculoskeletal
+cctv,28,1,closed-circuit television
+elpl,27,1,emoployer liability public liability
+aat,26,1,accountant technician
+dt,25,1,design technology
+hgv2,25,1,heavy goods vehicle
+hiab,25,1,loader crane
+hgvlgv,24,1,heavy goods vehicle light goods vehicle
+aca,22,1,chartered accountant
+ks3,22,1,key stage 3 teacher
+nqts,22,1,newly qualified teacher
+ops,22,1,operations
+physio,22,1,physiotherapy
+telecoms,22,1,telecommunications
+elearning,21,1,e-learning
+fm,21,1,facilities management
+qts,21,1,qualified teacher
+ae,20,1,emergency medical
+hse,20,1,health and safety
+lsa,20,1,learning support assistant
+nq,20,1,newly qualified
+senco,20,1,special educational needs coordinator
+ppi,19,1,insurance
+qsw,19,1,qualified social worker
+c1,19,1,van
+hlta,18,1,higher level teaching assistant
+camhs,18,1,child and adolescent mental health services
+cdp,17,1,chef
+dipfa,17,1,diploma for financial adviser
+pmld,17,1,learning difficulties
+npd,17,1,new product development
+hgv1,16,1,heavy goods vehicle
+ccnp,15,1,cisco certified network professional 
+er,15,1,employee relations
+acca,14,1,chartered accountant
+spr,13,1,internist
+sia,13,1,security industry authority
+rics,13,1,chartered surveyor
+aml,12,1,anti-money laundering
+comms,12,1,communications
+b2c,12,1,business to consumer
+pi,12,1,personal injury
+bdd,11,1,behavior-driven development 
+hrbp,11,1,human resources business partner
+sho,11,1,internist
+pcv,11,1,passenger carrying vehicle
+chp,10,1,heat power
+qhse,10,1,quality health safety environment
+qs,10,1,quality surveyor
+grad,10,1,trainee
+aum,10,1,assets under management
+tas,10,1,teaching assistant
+cfo,9,1,chief financial officer
+cpcs,9,1,construction plant competence scheme
+dev,9,1,developer
+iqa,9,1,internal quality assurance
+itsm,9,1,information technology service management
+sipp,9,1,personal pension
+ppt,9,1,powered pallet truck 
+hmp,9,1,prison
+prince2,9,1,project management
+psv,9,1,public service vehicle
+slt,9,1,speech therapy
+pru,9,1,student referral unit
+uxui,9,1,computer user experience
+pas,9,1,personal assistant
+emis,9,1,medical information system
+rf,9,1,radio-frequency
+app,8,1,application
+itil,8,1,information technology service management
+iba,8,1,insurance broking account
+ks3ks4,8,1,ks3 ks4 teacher
+lgv1,8,1,light goods vehicle
+lgvhgv,8,1,light goods vehicle heavy goods vehicle
+cima,8,1,management accountant
+moj,8,1,miscarriage of justice
+op,8,1,operation
+rmnrnld,8,1,registered mental nurse registered nurse learning disability
+rnld,8,1,registered nurse learning disability
+eal,8,1,english additional language
+npi,8,1,new product introduction
+bsl,7,1,british sign language
+cass,7,1,client asset sourcebook
+chc,7,1,community health center
+crs,7,1,credit
+iva,7,1,debt agreement
+vna,7,1,forklift
+ks34,7,1,ks3 ks4 teacher
+mgr,7,1,manager
+pos,7,1,point of sale
+quant,7,1,quantitative
+sims,7,1,school information management system
+sats,7,1,teacher assessment
+fs,7,1,financial services
+tele,7,1,telephone
+tvav,6,1,audio video
+gmp,6,1,good manufacturing practice
+hseq,6,1,health safety environment quality
+lcv,6,1,light commercial vehicle
+mlro,6,1,money laundering reporting officer
+ncs,6,1,national citizen service
+soc,6,1,security operations center
+neg,6,1,negotiator
+sheq,6,1,safety health environment quality
+emc,6,1,electromagnetic compatibility
+pqe,6,1,post qualified experience
+dsp,5,1,digital signal processing
+ebook,5,1,electronic book
+hv,5,1,high voltage
+hcm,5,1,human capital management
+ifrs,5,1,international financial reporting standards 
+ks1ks2,5,1,key stage 1 2 teacher
+ks5,5,1,key stage 5 teacher
+nihl,5,1,noise-induced hearing loss 
+ipaf,5,1,powered access equipment
+sr,5,1,senior
+uat,5,1,computer user acceptance testing
+vda,5,1,vehicle damage assessor
+pq,5,1,part qualified
+eas,5,1,executive assistant
+ecrm,5,1,electronic customer relationship management 
+cr che,5,1,creche
+spkg,5,1,speaking
+engs,5,1,engineer
+she,5,1,safety health environment
+obs,5,0,obstetrician
+mrics,5,1,chartered surveyor
+cib,4,1,bank
+bde,4,1,business development executive
+hcas,4,1,health care assistant
+hmo,4,1,house
+iso,4,1,international standards
+jr,4,1,junior
+lpc,4,1,legal practice course
+mfd,4,1,multi function device
+nvh,4,1,noise vibration and harshness
+os,4,1,operating system
+pharma,4,1,pharmaceutical
+rmnrgn,4,1,registered mental nurse registered general nurse
+reps,4,1,representative
+rdr,4,1,retail distribution review
+telco,4,1,telecommunications
+telephony,4,1,telephone
+gui,4,1,computer user experience
+aog,3,1,aircraft on ground
+bim,3,1,building information modeling
+cbt,3,1,cognitive behavioral therapy
+dept,3,1,department
+niceic,3,1,electrical installation
+fico,3,1,financial accounting and controlling
+hsqe,3,1,health safety quality and environment
+hgv1lgv1,3,1,heavy goods vehicle light goods vehicle
+hgvpsv,3,1,heavy goods vehicle public service vehicle
+san,3,1,high speed network
+fnol,3,1,insurance claim
+fpga,3,1,integrated circuit 
+asdsld,3,1,learning difficulty
+lms,3,1,learning management system
+lsas,3,1,learning support assistant
+lgv2,3,1,ligth goods vehicle
+nlp,3,1,natural language processing
+nrswa,3,1,new roads and street work
+upvc,3,1,pvc
+rec,3,1,recruitment
+rgns,3,1,registered general nurse
+rmns,3,1,registered mental nurse
+rbm,3,1,retail branch manager
+srm,3,1,supplier relationship management software
+sccm,3,1,systems management software 
+cta,3,1,certified tax adviser
+tefl,3,1,teaching english as foreign language
+telecomms,3,1,telecommunications
+hmyoi,3,1,young offender institution
+pa,1,1,personal assistant
+apps,,,application
+hr,,,human resources
+admin,,,administrative
+qc,,,quality control
+advisor,,,adviser
+co-ordinator,,,coordinator
+qa,,,quality assurance
+ecommerce,,,e-commerce
+fx,,,foreign exchange

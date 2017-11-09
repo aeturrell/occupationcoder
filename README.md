@@ -1,7 +1,11 @@
-# occupation-coder: a tool to associate job text with standard occupational classifications
+# occupation-coder:
+## A tool to associate job text with standard occupational classifications
 Given a job title, job description, and job sector the algorithm assigns a 3-digit standard occupational classification (SOC) code to the job. The algorithm uses the SOC 2010 standard, which can be found at WEBSITE.
 
 This code should be cited as ...
+
+### Testing
+The test matches to SOC are run on a file of example jobs, in this case job vacancies.
 
 
 ### Possible extensions/To do
@@ -14,3 +18,5 @@ This code should be cited as ...
 - Make sure code complies with PEP/usual Python naming conventions
 - Review which parts of the code are specific to SOC 2010 (and can be kept fixed) and which parts are specific to the original dataset of vacancies (which need to be changed)
 - Tidy up dictionaries
+- Set up the tests
+- Add more jobs to the test file

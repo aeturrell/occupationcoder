@@ -403,6 +403,16 @@ def return_best_match_2(x):
             final_code = (codes[4], ('None'))
     return final_code
 
+def ascii_convert(cols,dfIn):
+    """
+    Function cleans ascii input and converts everything to strings in unicode
+    """
+    for col in cols:
+        dfIn[col] = dfIn[col].astype(unicode)
+        dfIn[col] = dfIn[col].apply(lambda x: x.encode('ascii', 'replace'))
+        dfIn[col] = dfIn[col].astype(str)
+    return dfIn
+
 
 ## Define main function. Main operations are placed here to make it possible
 ## use multiprocessing.
@@ -416,27 +426,18 @@ if __name__ == '__main__':
     test_directory = r"/Users/at/Documents/occupation-coder/TestVacancies"
     df_all  = pd.read_csv(os.path.join(test_directory,'test_vacancies.csv'),
                       encoding = 'utf-8', nrows = 1000)
+    # Return an error if user has passed in columns which do not exist in the
+    # data frame.
 
     ## Only keep columns we need
-
-    df = df_all[['job_title', 'job_description', 'job_sector']]
-
+    colsToProcess = ['job_title', 'job_description', 'job_sector']
+    df = df_all[colsToProcess]
+    del(df_all)
     ## Handle ascii converter errors
-
-    df['job_title'] = df['job_title'].astype(unicode)
-    df['job_description'] = df['job_description'].astype(unicode)
-    df['job_sector'] = df['job_sector'].astype(unicode)
-
-    df['job_title'] = df['job_title'].apply(lambda x: x.encode('ascii', 'replace'))
-    df['job_description'] = df['job_description'].apply(lambda x: x.encode('ascii', 'replace'))
-    df['job_sector'] = df['job_sector'].apply(lambda x: x.encode('ascii', 'replace'))
-
-    df['job_title'] = df['job_title'].astype(str)
-    df['job_description'] = df['job_description'].astype(str)
-    df['job_sector'] = df['job_sector'].astype(str)
-
-
+    df = ascii_convert(colsToProcess,df)
     ## Read in lookups
+    dictionary_path = os.path.realpath(os.path.join("TestVacancies","Dictionaries"))
+    known_words_dict=pd.read_json(r"/Users/at/Documents/occupation-coder/TestVacancies/Dictionaries/known_words_dict.json")
 
     with open(directory+'\\lookups\\known_words_dict.pkl', 'r') as infile:
         known_words_dict = pickle.load(infile)

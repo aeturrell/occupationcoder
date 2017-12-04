@@ -13,6 +13,7 @@ import nltk
 import pickle
 import re
 import sys
+import json
 
 
 ## The options below can be used to run script with parameters from command line
@@ -422,10 +423,10 @@ if __name__ == '__main__':
     ## Part I: Cleaning
 
     ## Read in dataframe
-    test_directory = os.path.realpath("TestVacancies")
-    test_directory = r"/Users/at/Documents/occupation-coder/TestVacancies"
-    df_all  = pd.read_csv(os.path.join(test_directory,'test_vacancies.csv'),
-                      encoding = 'utf-8', nrows = 1000)
+    root_directory = os.path.realpath("TestVacancies")
+    #test_directory = r"/Users/at/Documents/occupation-coder/TestVacancies"
+    df_all  = pd.read_csv(os.path.join(root_directory,'test_vacancies.csv'),
+                      nrows = 1000)
     # Return an error if user has passed in columns which do not exist in the
     # data frame.
 
@@ -434,15 +435,17 @@ if __name__ == '__main__':
     df = df_all[colsToProcess]
     del(df_all)
     ## Handle ascii converter errors
-    df = ascii_convert(colsToProcess,df)
+    #df = ascii_convert(colsToProcess,df)
     ## Read in lookups
-    dictionary_path = os.path.realpath(os.path.join("TestVacancies","Dictionaries"))
-    known_words_dict=pd.read_json(r"/Users/at/Documents/occupation-coder/TestVacancies/Dictionaries/known_words_dict.json")
+    dictionary_path = os.path.realpath(os.path.join(root_directory,
+                                                    "Dictionaries"))
+    known_words_dict=pd.read_json(os.path.join(dictionary_path,
+                                                   "known_words_dict.json"))
 
-    with open(directory+'\\lookups\\known_words_dict.pkl', 'r') as infile:
+    with open(dictionary_path+'\\lookups\\known_words_dict.pkl', 'r') as infile:
         known_words_dict = pickle.load(infile)
 
-    with open(directory+'\\lookups\\expand_dict.pkl', 'r') as infile:
+    with open(dictionary_path+'\\lookups\\expand_dict.pkl', 'r') as infile:
         expand_dict = pickle.load(infile)
 
     ## Generate dask dataframe from pandas dataframe to enable multiprocessing

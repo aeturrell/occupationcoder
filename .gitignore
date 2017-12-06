@@ -6,4 +6,4 @@
 Outputs/
 
 # Compiled files
-*.pyc
+occupation_coder/*.pyc

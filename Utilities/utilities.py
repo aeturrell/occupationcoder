@@ -7,6 +7,26 @@ Created on Wed Dec  6 11:58:38 2017
 """
 import nltk
 import re
+from sklearn.metrics.pairwise import cosine_similarity
+from sklearn.feature_extraction.text import TfidfVectorizer
+import os
+import json
+import pandas as pd
+
+script_dir = os.path.dirname(__file__)
+parent_dir = os.path.join(script_dir, '..')
+lookup_dir = os.path.join(parent_dir, 'Dictionaries')
+
+with open(os.path.join(lookup_dir, 'known_words_dict.json'), 'r') as infile:
+    known_words_dict = json.load(infile)
+
+with open(os.path.join(lookup_dir, 'expand_dict.json'), 'r') as infile:
+    expand_dict = json.load(infile)
+    
+with open(os.path.join(lookup_dir, 'titles_minor_group_ons.json'), 'r') as infile:
+    titles_mg = json.load(infile)
+
+mg_buckets = pd.read_json(os.path.join(lookup_dir,'mg_buckets_ons_df_processed.json'))
 
 def lemmatise(title_terms):
     """
@@ -54,8 +74,8 @@ def lookup_replacement(words, lookup_dict):
     >>> lookup_replacement(['pa', 'to', 'vice', 'president'], expand_dict)
     [u'personal assistant', 'to', 'vice', 'president']
     """
-    keys = expand_dict.keys()
-    this_dict = expand_dict
+    keys = lookup_dict.keys()
+    this_dict = lookup_dict
     words = [replace_word(word, this_dict) if word in keys else word for word in words]
     return words
 
@@ -153,7 +173,8 @@ def clean_title(dataframe_row):
     4              care assistant worker
     dtype: object
     """
-    lemm = lemmatise(dataframe_row['job_title'].split())
+    lower = strip_tags(dataframe_row['job_title']).lower()
+    lemm = lemmatise(lower.split())
     exp = lookup_replacement(lemm, expand_dict)
     known = replace_unknown(' '.join(exp)).strip()
     nodigits = remove_digits(known)
@@ -229,7 +250,7 @@ def exact_match(some_title):
     >>> exact_match('professional medical writer')
     'NA'
     """
-    title = ' '.join(som_title.split()[:3])
+    title = ' '.join(some_title.split()[:3])
     result = 'NA'
     keys = titles_mg.keys()
     for k in keys:
@@ -265,13 +286,17 @@ def get_best_score_top5_2(dataframe_row):
 
     >>> from sklearn.feature_extraction.text import TfidfVectorizer
     >>> from sklearn.metrics.pairwise import cosine_similarity
-    >>> mg_buckets = pd.read_pickle(directory+'\\lookups\\mg_buckets_ons_df_processed.pkl')
     >>> textfortoken= mg_buckets.Titles_nospace
     >>> tfidf = TfidfVectorizer(tokenizer=tokenize, stop_words='english',ngram_range=(1,3))
     >>> tfidfm = tfidf.fit_transform(textfortoken)
     >>> get_best_score_top5_2('community nurse')
     ['331', '612', '323', '614', '223']
     """
+    textfortoken= mg_buckets.Titles_nospace
+    tfidf = TfidfVectorizer(tokenizer=tokenize, 
+                                stop_words='english',
+                                ngram_range=(1,3))
+    tfidfm = tfidf.fit_transform(textfortoken)
     new_i = tfidf.transform([dataframe_row])
     known_titles = tfidfm
     cosine_similarities = cosine_similarity(new_i, known_titles)

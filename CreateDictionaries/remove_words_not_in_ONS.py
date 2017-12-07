@@ -44,7 +44,7 @@ for word in words_to_remove:
 
 # Write dictionary to pickle and json
 
-#pickle.dump(known_words_dict, open('known_words_dict.pkl', 'wb'))
+#pickle.dump(known_words_dict, open(os.path.join(lookup_dir, 'known_words_dict.pkl'), 'wb'))
 
 with open(os.path.join(lookup_dir, 'known_words_dict.json'), 'w') as fp:
     json.dump(known_words_dict, fp, indent = 4)

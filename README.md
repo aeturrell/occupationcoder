@@ -12,6 +12,9 @@ If you use this code please cite:
 ### Testing
 The test matches to SOC are run on a file of example jobs, in this case job vacancies.
 
+### Issues and warnings
+The input data must be in utf encoding.
+
 
 ### Possible extensions/To do
 - Put any repeated code into functions which are run efficiently

@@ -11,6 +11,7 @@ import pandas as pd
 import os
 
 script_dir = os.path.dirname(__file__)
+
 parent_dir = os.path.join(script_dir, '..')
 data_dir = os.path.join(parent_dir, 'TestVacancies')
 output_dir = os.path.join(parent_dir, 'Outputs')
@@ -29,12 +30,11 @@ os.chdir(script_dir)
 ## Define main function. Main operations are placed here to make it possible
 ## use multiprocessing in Windows.
 if __name__ == '__main__':
-
     ## Part I: Cleaning
 
     ## Read in dataframe
     #test_directory = r"/Users/at/Documents/occupation-coder/TestVacancies"
-    df_all  = pd.read_csv(os.path.join(data_dir,'test_vacancies.csv'),
+    df_all  = pd.read_csv(os.path.join(data_dir,'test_vacancies2.csv'),
                       nrows = 1000, encoding = 'utf-8')
     # Return an error if user has passed in columns which do not exist in the
     # data frame.
@@ -42,7 +42,7 @@ if __name__ == '__main__':
     ## Only keep columns we need
     colsToProcess = ['job_title', 'job_description', 'job_sector']
     df = df_all[colsToProcess]
-        
+
 #    ## Handle ascii converter errors
 #    df = utils.ascii_convert(colsToProcess,df)
 
@@ -90,7 +90,7 @@ if __name__ == '__main__':
     ds = ds.assign(top5 = ds['title_and_desc'].map(utils.get_best_score_top5_2))
 
     ## Run function to get best fuzzy match
-    res = ds.apply(utils.return_best_match_2, axis = 1, 
+    res = ds.apply(utils.return_best_match_2, axis = 1,
                    meta = ('x', ds['title_nospace'].dtype))
     x = res.compute(get=dask.multiprocessing.get)
 
@@ -106,4 +106,6 @@ if __name__ == '__main__':
     df_all.loc[:, 'SOC_code'] = combined_sorted.loc[:, 'SOC_code']
 
     ## Write to pickle
+    os.mkdir(output_dir)
     df_all.to_pickle(os.path.join(output_dir, 'processed_jobs.pkl'))
+    print("Script complete")

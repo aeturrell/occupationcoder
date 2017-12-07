@@ -12,16 +12,14 @@ import os
 import json
 import collections
 
-directory = r"C:\Users\327660\Documents\Job_title_matching"
-directory.replace('\\','/')
-directory = os.path.normpath(directory)
-os.chdir(directory)
+script_dir = os.path.dirname(__file__)
+parent_dir = os.path.join(script_dir, '..')
+lookup_dir = os.path.join(parent_dir, 'Dictionaries')
 
-#%% Create dictionary of words that exist in ONS classification
-
+# Create dictionary of words that exist in ONS classification
 # Load dictionary of titles, but no descriptions
-with open('titles_mg_ons_nodesc.pkl', 'r') as infile:
-    titles_mg_nodesc = pickle.load(infile)
+with open(os.path.join(lookup_dir, 'titles_mg_ons_nodesc.json'), 'r') as infile:
+    titles_mg_nodesc = json.load(infile)
 
 # Get known titles from the dictionary
 known_words = []
@@ -44,10 +42,9 @@ words_to_remove = ['mini', 'x', 'london','nh', 'apprentice', 'graduate',
 for word in words_to_remove:
     known_words_dict.pop(word, None)
 
-#%% Write dictionary to pickle and json
+# Write dictionary to pickle and json
 
-pickle.dump(known_words_dict, open('known_words_dict.pkl', 'wb'))
+#pickle.dump(known_words_dict, open('known_words_dict.pkl', 'wb'))
 
-with open('known_words_dict.json', 'w') as fp:
+with open(os.path.join(lookup_dir, 'known_words_dict.json'), 'w') as fp:
     json.dump(known_words_dict, fp, indent = 4)
-    

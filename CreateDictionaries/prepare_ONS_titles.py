@@ -7,64 +7,29 @@ Created on Tue Mar 28 09:38:19 2017
 """
 
 import pandas as pd
-import nltk
 import pickle
 import re
 import os
 import json
 
-directory = r"C:\Users\327660\Documents\Job_title_matching"
-directory.replace('\\','/')
-directory = os.path.normpath(directory)
-os.chdir(directory)
+script_dir = os.path.dirname(__file__)
+parent_dir = os.path.join(script_dir, '..')
+lookup_dir = os.path.join(parent_dir, 'Dictionaries')
+utility_dir = os.path.join(parent_dir, 'Utilities')
 
-#%% Define functions
-def lemmatise(title_terms):
-    '''
-    Takes list as input.    
-    Removes suffixes if the new words exists in the nltk dictionary.
-    The purpose of the function is to convert plural forms into singular.
-    Allows some nouns to remain in plural form (the to_keep_asis is manually curated).
-    Returns a list.
-    
-    In [16]: lemmatise(['teachers'])
-    Out[16]: [u'teacher']
-    
-    In [17]: lemmatise(['analytics'])
-    Out[17]: ['analytics']
-    '''
-    to_keep_asis = ['sales', 'years', 'goods', 'operations', 'systems', 
-                    'communications', 'events', 'loans', 'grounds', 
-                    'lettings', 'claims', 'accounts', 'relations',
-                    'complaints', 'services']  
-    wnl = nltk.WordNetLemmatizer()
-    processed_terms = [wnl.lemmatize(i) if i not in to_keep_asis else i for i in title_terms]
-    return processed_terms
-  
-  
-select_punct = set('!"#$%&\()*+,-./:;<=>?@[\\]^_`{|}~') #only removed "'"
-def replace_punctuation(s):
-    '''
-    Takes string as input.
-    Removes punctuation from a string if the character is in select_punct.
-    Returns a string.
-    
-    In [18]: replace_punctuation('sales executives/sales consultants - london')
-    Out[18]: 'sales executives sales consultants   london'
-    '''
-    for i in set(select_punct):
-        if i in s:
-            s = s.replace(i, ' ')
-    return s
+os.chdir(utility_dir)
+import utilities as utils
+os.chdir(script_dir)
 
-#%% Read in Excel file with ONS Index
-ONSdf =pd.read_excel('ONS_index.xls', sheetname = 'SOC2010 Full Index V5', 
+# Read in Excel file with ONS Index
+ONSdf =pd.read_excel(os.path.join(lookup_dir, 'ONS_index.xls'), 
+                     sheetname = 'SOC2010 Full Index V5', 
                      encoding = 'utf-8')
 
 #Only keep columns of interest
 ONSdf = ONSdf[['SOC 2010', 'INDEXOCC', 'IND', 'ADD', 'SEE']]
 
-#%% Process alternative titles from ONS Index
+# Process alternative titles from ONS Index
 
 # Reverse order of words in titles
 ONSdf['reversed_title'] = ONSdf['INDEXOCC'].apply(lambda x: x.split(', ')[::-1])
@@ -82,7 +47,7 @@ apply(lambda x: ' '.join(x), axis=1)
 
 # Remove punctuation and strip out white spaces
 ONSdf['complete_title2'] = ONSdf['complete_title'].\
-apply(lambda x: replace_punctuation(x).strip().lower())
+apply(lambda x: utils.replace_punctuation(x).strip().lower())
 
 # Remove extra white spaces
 ONSdf['complete_title3'] = ONSdf['complete_title2'].\
@@ -96,16 +61,17 @@ apply(lambda x: str(x)[:3])
 
 #reducedONSdf.to_pickle('reducedONSdf.pkl')
 
-#%% Process official unit group and minor group titles from ONS classification
+# Process official unit group and minor group titles from ONS classification
 
 # Read in minor group structure
-minor_group = pd.read_excel('ons_soc_structure_minor_group.xlsx', 
+minor_group = pd.read_excel(os.path.join(lookup_dir, 'ons_soc_structure_minor_group.xlsx'), 
                             encoding = 'utf-8')
 minor_group.columns = ['Minor', 'Title']
 minor_group.loc[:, 'Minor'] = minor_group.loc[:, 'Minor'].astype(str)
 
 # Read in unit group structure
-unit_group = pd.read_excel('ons_soc_structure.xlsx', sheetname = 'desc', 
+unit_group = pd.read_excel(os.path.join(lookup_dir, 'ons_soc_structure.xlsx'), 
+                           sheetname = 'desc', 
                            encoding = 'utf-8')
 unit_group.columns = ['Unit', 'Title', 'Description']
 
@@ -122,7 +88,7 @@ apply(lambda x: x.lower().strip())
 unit_group.loc[:, 'Description'] = unit_group.loc[:, 'Description'].\
 apply(lambda x: x.lower())
 
-#%% Create title dictionary
+# Create title dictionary
 
 # Start with minor group titles: key (minor group SOC), value (list of titles)
 titles_mg = {}
@@ -140,9 +106,9 @@ for ix, t in enumerate(reducedONSdf.loc[:, 'SOC_Minor_group']):
         titles_mg[t].append(reducedONSdf.loc[ix, 'complete_title3'])
         
 # Write dictionary without descriptions to pickle and json
-pickle.dump(titles_mg, open('titles_mg_ons_nodesc.pkl', 'wb'))
+#pickle.dump(titles_mg, open(os.path.join(lookup_dir, 'titles_mg_ons_nodesc.pkl'), 'wb'))
 
-with open('titles_mg_ons_nodesc.json', 'w') as fp:
+with open(os.path.join(lookup_dir, 'titles_mg_ons_nodesc.json'), 'w') as fp:
     json.dump(titles_mg, fp, indent = 4)
 
 # Add description
@@ -150,14 +116,14 @@ for ix, t in enumerate(unit_group.loc[:, 'Minor']):
     if t in titles_mg.keys():
         titles_mg[t].append(unit_group.loc[ix, 'Description'])
 
-#%% Write dictionary to pickle and json
+# Write dictionary to pickle and json
 
-pickle.dump(titles_mg, open('titles_minor_group_ons.pkl', 'wb'))
+#pickle.dump(titles_mg, open(os.path.join(lookup_dir, 'titles_minor_group_ons.pkl'), 'wb'))
 
-with open('titles_minor_group_ons.json', 'w') as fp:
+with open(os.path.join(lookup_dir, 'titles_minor_group_ons.json'), 'w') as fp:
     json.dump(titles_mg, fp, indent = 4)
     
-#%% Create dataframe with 'buckets' of titles
+# Create dataframe with 'buckets' of titles
 
 mg_buckets = pd.DataFrame.from_dict(titles_mg.items())
 mg_buckets.columns = ['SOC_code', 'Titles']
@@ -167,19 +133,20 @@ mg_buckets['Titles_joined']=mg_buckets['Titles'].apply(lambda x: ' '.join(x))
 
 # Remove punctuation
 mg_buckets['Titles_nopunct']=mg_buckets['Titles_joined'].\
-apply(lambda x: replace_punctuation(x).strip())
+apply(lambda x: utils.replace_punctuation(x).strip())
 
 
 # Lemmatise titles to convert from plural forms to singular
 mg_buckets['Titles_lemm']=mg_buckets['Titles_nopunct'].\
-apply(lambda x: lemmatise(x.split()))
+apply(lambda x: utils.lemmatise(x.split()))
 mg_buckets['Titles_joined2']=mg_buckets['Titles_lemm'].\
 apply(lambda x: ' '.join(x))
 mg_buckets['Titles_nospace'] = mg_buckets['Titles_joined2'].\
 apply(lambda x: re.sub(' +',' ',x))
 mg_buckets_reduced = mg_buckets[['SOC_code', 'Titles_nospace']]
 
-#%% Write dataframe to pickle and json
+# Write dataframe to pickle and json
 
-mg_buckets_reduced.to_pickle('mg_buckets_ons_df_processed.pkl')
-mg_buckets_reduced.to_json('mg_buckets_ons_df_processed.json', orient = 'records')
+#mg_buckets_reduced.to_pickle(os.path.join(lookup_dir, 'mg_buckets_ons_df_processed.pkl'))
+mg_buckets_reduced.to_json(os.path.join(lookup_dir, 'mg_buckets_ons_df_processed.json'), 
+                           orient = 'records')

@@ -9,18 +9,17 @@ import dask.dataframe as dd
 from dask.diagnostics import Profiler, ResourceProfiler, CacheProfiler
 import pandas as pd
 import os
+import sys
 
-script_dir = os.path.dirname(__file__)
-
+script_dir = os.path.dirname(os.path.abspath(__file__))
 parent_dir = os.path.join(script_dir, '..')
 data_dir = os.path.join(parent_dir, 'TestVacancies')
 output_dir = os.path.join(parent_dir, 'Outputs')
 lookup_dir = os.path.join(parent_dir, 'Dictionaries')
 utility_dir = os.path.join(parent_dir, 'Utilities')
 
-os.chdir(utility_dir)
+sys.path.append(utility_dir)
 import utilities as utils
-os.chdir(script_dir)
 
 ## The options below can be used to run script with parameters from command line
 #inFile = sys.argv[1]

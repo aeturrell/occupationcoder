@@ -11,7 +11,7 @@ import pickle
 import os
 import json
 
-script_dir = os.path.dirname(__file__)
+script_dir = os.path.dirname(os.path.abspath(__file__))
 parent_dir = os.path.join(script_dir, '..')
 lookup_dir = os.path.join(parent_dir, 'Dictionaries')
 

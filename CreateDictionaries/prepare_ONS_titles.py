@@ -11,15 +11,15 @@ import pickle
 import re
 import os
 import json
+import sys
 
-script_dir = os.path.dirname(__file__)
+script_dir = os.path.dirname(os.path.abspath(__file__))
 parent_dir = os.path.join(script_dir, '..')
 lookup_dir = os.path.join(parent_dir, 'Dictionaries')
 utility_dir = os.path.join(parent_dir, 'Utilities')
 
-os.chdir(utility_dir)
+sys.path.append(utility_dir)
 import utilities as utils
-os.chdir(script_dir)
 
 # Read in Excel file with ONS Index
 ONSdf =pd.read_excel(os.path.join(lookup_dir, 'ONS_index.xls'), 

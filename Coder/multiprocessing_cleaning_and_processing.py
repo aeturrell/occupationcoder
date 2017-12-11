@@ -33,7 +33,7 @@ if __name__ == '__main__':
 
     ## Read in dataframe
     #test_directory = r"/Users/at/Documents/occupation-coder/TestVacancies"
-    df_all  = pd.read_csv(os.path.join(data_dir,'test_vacancies2.csv'),
+    df_all  = pd.read_csv(os.path.join(data_dir,'test_vacancies.csv'),
                       nrows = 1000, encoding = 'utf-8')
     # Return an error if user has passed in columns which do not exist in the
     # data frame.
@@ -105,7 +105,7 @@ if __name__ == '__main__':
     df_all.loc[:, 'SOC_code'] = combined_sorted.loc[:, 'SOC_code']
 
     ## Write to csv
-    os.mkdir(output_dir)
+#    os.mkdir(output_dir)
     df_all.to_csv(os.path.join(output_dir, 'processed_jobs.csv'),
                   index = False,
                   encoding = 'utf-8')

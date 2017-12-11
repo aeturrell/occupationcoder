@@ -104,7 +104,9 @@ if __name__ == '__main__':
     ## Take SOC_code to original dataframe, which contains all other columns
     df_all.loc[:, 'SOC_code'] = combined_sorted.loc[:, 'SOC_code']
 
-    ## Write to pickle
+    ## Write to csv
     os.mkdir(output_dir)
-    df_all.to_pickle(os.path.join(output_dir, 'processed_jobs.pkl'))
+    df_all.to_csv(os.path.join(output_dir, 'processed_jobs.csv'),
+                  index = False,
+                  encoding = 'utf-8')
     print("Script complete")

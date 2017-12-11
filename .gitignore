@@ -5,5 +5,8 @@
 # Outputs folder
 Outputs/
 
+# exception for the Outputs folder (so that it’s available)
+!Outputs/.gitkeep
+
 # Compiled files
 *.pyc

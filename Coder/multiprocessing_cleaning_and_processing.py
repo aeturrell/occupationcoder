@@ -11,15 +11,18 @@ import pandas as pd
 import os
 import sys
 
-script_dir = os.path.dirname(os.path.abspath(__file__))
+
+#os.chdir('/Users/at/Documents/occupation-coder/Coder')
+script_dir = os.path.dirname(os.path.abspath('__file__'))
 parent_dir = os.path.join(script_dir, '..')
 data_dir = os.path.join(parent_dir, 'TestVacancies')
 output_dir = os.path.join(parent_dir, 'Outputs')
 lookup_dir = os.path.join(parent_dir, 'Dictionaries')
 utility_dir = os.path.join(parent_dir, 'Utilities')
-
 sys.path.append(utility_dir)
 import utilities as utils
+
+
 
 ## The options below can be used to run script with parameters from command line
 #inFile = sys.argv[1]
@@ -32,15 +35,20 @@ if __name__ == '__main__':
     ## Part I: Cleaning
 
     ## Read in dataframe
-    #test_directory = r"/Users/at/Documents/occupation-coder/TestVacancies"
+
     df_all  = pd.read_csv(os.path.join(data_dir,'test_vacancies.csv'),
-                      nrows = 1000, encoding = 'utf-8')
+                      nrows = 1000)
+    
     # Return an error if user has passed in columns which do not exist in the
     # data frame.
 
     ## Only keep columns we need
     colsToProcess = ['job_title', 'job_description', 'job_sector']
+    # Ensure it's all in unicode
+    for col in colsToProcess:
+        df_all[col] = df_all[col].apply(lambda x: unicode(str(x),'utf-8','ignore'))
     df = df_all[colsToProcess]
+    
 
 #    ## Handle ascii converter errors
 #    df = utils.ascii_convert(colsToProcess,df)

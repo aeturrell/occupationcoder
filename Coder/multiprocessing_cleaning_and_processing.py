@@ -6,7 +6,7 @@ Created on Tue Feb 07 18:24:19 2017
 """
 import dask
 import dask.dataframe as dd
-from dask.diagnostics import Profiler, ResourceProfiler, CacheProfiler
+#from dask.diagnostics import Profiler, ResourceProfiler, CacheProfiler
 import pandas as pd
 import os
 import sys
@@ -22,7 +22,8 @@ utility_dir = os.path.join(parent_dir, 'Utilities')
 sys.path.append(utility_dir)
 import utilities as utils
 
-
+inFile = sys.argv[1]
+#outFile = sys.argv[2]
 
 ## The options below can be used to run script with parameters from command line
 #inFile = sys.argv[1]
@@ -36,7 +37,7 @@ if __name__ == '__main__':
 
     ## Read in dataframe
 
-    df_all  = pd.read_csv(os.path.join(data_dir,'test_vacancies.csv'),
+    df_all  = pd.read_csv(inFile,
                       nrows = 1000)
     
     # Return an error if user has passed in columns which do not exist in the
@@ -54,11 +55,11 @@ if __name__ == '__main__':
 #    df = utils.ascii_convert(colsToProcess,df)
 
     ## Generate dask dataframe from pandas dataframe to enable multiprocessing
-    prof1=Profiler()
-    prof1.register()
-
-    rprof1 = ResourceProfiler()
-    rprof1.register()
+#    prof1=Profiler()
+#    prof1.register()
+#
+#    rprof1 = ResourceProfiler()
+#    rprof1.register()
 
     ds = dd.from_pandas(df, npartitions = 2)
 
@@ -92,8 +93,8 @@ if __name__ == '__main__':
 
     ## Run function to obtain top 5 most similar minor groups
     ## Tfidf vectorisation is implemented inside the function utils.get_best_score_top5_2
-    prof2=Profiler()
-    prof2.register()
+#    prof2=Profiler()
+#    prof2.register()
     ds = ds.assign(top5 = ds['title_and_desc'].map(utils.get_best_score_top5_2))
 
     ## Run function to get best fuzzy match

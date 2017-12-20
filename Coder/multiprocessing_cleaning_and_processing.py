@@ -37,30 +37,23 @@ if __name__ == '__main__':
 
     ## Read in dataframe
 
-    df_all  = pd.read_csv(inFile,
-                      nrows = 1000)
-    
-    # Return an error if user has passed in columns which do not exist in the
-    # data frame.
+    df_all  = pd.read_csv(inFile)
 
     ## Only keep columns we need
     colsToProcess = ['job_title', 'job_description', 'job_sector']
+
+    # Return an error if user has passed in columns which do not exist in the
+    # data frame.
+    for col in colsToProcess:
+        if col not in df_all.columns:
+            sys.exit( ("Occupation-coder message:\n")+
+                ("Please ensure a "+col+" column exists in your csv file"))
     # Ensure it's all in unicode
     for col in colsToProcess:
         df_all[col] = df_all[col].apply(lambda x: unicode(str(x),'utf-8','ignore'))
     df = df_all[colsToProcess]
-    
-
-#    ## Handle ascii converter errors
-#    df = utils.ascii_convert(colsToProcess,df)
 
     ## Generate dask dataframe from pandas dataframe to enable multiprocessing
-#    prof1=Profiler()
-#    prof1.register()
-#
-#    rprof1 = ResourceProfiler()
-#    rprof1.register()
-
     ds = dd.from_pandas(df, npartitions = 2)
 
     ## Clean job title, job sector and description
@@ -93,8 +86,6 @@ if __name__ == '__main__':
 
     ## Run function to obtain top 5 most similar minor groups
     ## Tfidf vectorisation is implemented inside the function utils.get_best_score_top5_2
-#    prof2=Profiler()
-#    prof2.register()
     ds = ds.assign(top5 = ds['title_and_desc'].map(utils.get_best_score_top5_2))
 
     ## Run function to get best fuzzy match
@@ -114,8 +105,8 @@ if __name__ == '__main__':
     df_all.loc[:, 'SOC_code'] = combined_sorted.loc[:, 'SOC_code']
 
     ## Write to csv
-#    os.mkdir(output_dir)
     df_all.to_csv(os.path.join(output_dir, 'processed_jobs.csv'),
                   index = False,
                   encoding = 'utf-8')
-    print("Script complete")
+    print(("Occupation-coder message:\n")+
+        ("Coding complete"))

@@ -15,14 +15,16 @@ import pandas as pd
 
 script_dir = os.path.dirname(os.path.abspath(__file__))
 parent_dir = os.path.join(script_dir, '..')
-lookup_dir = os.path.join(parent_dir, 'Dictionaries')
+lookup_dir = os.path.join(parent_dir, 'dictionaries')
+#lookup_dir = os.path.join('..','dictionaries')
+print(lookup_dir)
 
 with open(os.path.join(lookup_dir, 'known_words_dict.json'), 'r') as infile:
     known_words_dict = json.load(infile)
 
 with open(os.path.join(lookup_dir, 'expand_dict.json'), 'r') as infile:
     expand_dict = json.load(infile)
-    
+
 with open(os.path.join(lookup_dir, 'titles_minor_group_ons.json'), 'r') as infile:
     titles_mg = json.load(infile)
 
@@ -293,7 +295,7 @@ def get_best_score_top5_2(dataframe_row):
     ['331', '612', '323', '614', '223']
     """
     textfortoken= mg_buckets.Titles_nospace
-    tfidf = TfidfVectorizer(tokenizer=tokenize, 
+    tfidf = TfidfVectorizer(tokenizer=tokenize,
                                 stop_words='english',
                                 ngram_range=(1,3))
     tfidfm = tfidf.fit_transform(textfortoken)

@@ -11,16 +11,15 @@ import pandas as pd
 import os
 import sys
 
-
 #os.chdir('/Users/at/Documents/occupation-coder/Coder')
-script_dir = os.path.dirname(os.path.abspath('__file__'))
-parent_dir = os.path.join(script_dir, '..')
-data_dir = os.path.join(parent_dir, 'TestVacancies')
-output_dir = os.path.join(parent_dir, 'Outputs')
-lookup_dir = os.path.join(parent_dir, 'Dictionaries')
-utility_dir = os.path.join(parent_dir, 'Utilities')
-sys.path.append(utility_dir)
-import utilities as utils
+# script_dir = os.path.dirname(os.path.abspath('__file__'))
+# parent_dir = os.path.join(script_dir, '..')
+# data_dir = os.path.join(parent_dir, 'TestVacancies')
+# output_dir = os.path.join(parent_dir, 'Outputs')
+# lookup_dir = os.path.join(parent_dir, 'Dictionaries')
+# utility_dir = os.path.join(parent_dir, 'Utilities')
+#sys.path.append(utility_dir)
+import utilities.utilities as utils
 
 inFile = sys.argv[1]
 #outFile = sys.argv[2]
@@ -46,7 +45,7 @@ if __name__ == '__main__':
     # data frame.
     for col in colsToProcess:
         if col not in df_all.columns:
-            sys.exit( ("Occupation-coder message:\n")+
+            sys.exit( ("Occupationcoder message:\n")+
                 ("Please ensure a "+col+" column exists in your csv file"))
     # Ensure it's all in unicode
     for col in colsToProcess:

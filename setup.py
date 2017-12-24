@@ -12,7 +12,7 @@ from shutil import rmtree
 from setuptools import find_packages, setup, Command
 
 # Package meta-data.
-NAME = 'occupation-coder'
+NAME = 'occupationcoder'
 DESCRIPTION = 'A tool to use job text, such as job description, to assign standard occupational classification codes. '
 URL = 'https://github.com/aeturrell/occupation-coder'
 EMAIL = 'a.e.turrell@gmail.com'

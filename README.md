@@ -1,4 +1,4 @@
-# occupation-coder
+# occupationcoder
 
 ## A tool to use job text, such as job description, to assign standard occupational classification codes
 

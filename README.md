@@ -30,9 +30,10 @@ To run the code on a file (eg csv name 'job_file.csv') with structure
 | job_title     | job_description| job_sector |
 | ------------- |:--------------| :----------|
 | Physicist     | Make calculations about the universe, do research, perform experiments and understand the physical environment. | Professional, scientific & technical activities |
+
 use
 ```Python
-df = pd.read_csv(directory+'job_file.csv')
+df = pd.read_csv('path/to/foo.csv')
 df = myCoder.codedataframe(df)
 ```
 This will return a new dataframe with SOC code entries appended in a new column:
@@ -42,24 +43,23 @@ This will return a new dataframe with SOC code entries appended in a new column:
 | Physicist     | Make calculations about the universe, do research, perform experiments and understand the physical environment. | Professional, scientific & technical activities | 211 |
 
 ### Running the code from the command line
-If you have all the relevant packages, navigate to the occupation-coder/Coder directory and run
+If you have all the relevant packages in requirements.txt, download the code and navigate to the occupationcoder folder. Then run
 ```Python
-python multiprocessing_cleaning_and_processing.py path/to/file/foo.csv
+python -m occupationcoder.coder.coder path/to/foo.csv
 ```
-This will create a 'processed_jobs.csv' file in Outputs/ which has the original text and an extra 'SOC_code' column with assigned SOC codes.
+This will create a 'processed_jobs.csv' file in the outputs/ folder which has the original text and an extra 'SOC_code' column with the assigned SOC codes.
 
 ### Testing
 The test matches to SOC are run on a file of example jobs, in this case job vacancies.
 The code to run the test is
 ```
-python multiprocessing_cleaning_and_processing.py ../TestVacancies/test_vacancies.csv
+python -m occupationcoder.coder.coder occupationcoder/testvacancies/test_vacancies.csv
 ```
 
 ### To do
 - Put any repeated code into functions which are run efficiently
 - Option to use title alone, or just title and description
 - Option to output a confidence score
-- Move code over to being object oriented so that an occupation-coder instance loads up all of the requisite dictionaries and can then accept either all records at once, or successively.
 - Storing the outcomes of successfully matched records within an instance (up to a limit) so that if the same records appear again they get matched more efficiently.
 - Make the parallel options scalable (so that they are enabled with a single option, or even automatically)
 - Make sure code complies with PEP/usual Python naming conventions

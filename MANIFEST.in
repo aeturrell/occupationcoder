@@ -1,0 +1,4 @@
+include testvacancies *
+recursive-include dictionaries *
+include README.md
+include requirements.txt

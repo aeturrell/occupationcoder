@@ -13,11 +13,11 @@ import os
 import json
 import pandas as pd
 
-# script_dir = os.path.dirname(os.path.abspath(__file__))
-# parent_dir = os.path.join(script_dir, '..')
-# lookup_dir = os.path.join(parent_dir, 'dictionaries')
-lookup_dir = os.path.join('..','dictionaries')
-print(lookup_dir)
+script_dir = os.path.dirname(os.path.abspath(__file__))
+parent_dir = os.path.join(script_dir, '..')
+lookup_dir = os.path.join(parent_dir, 'dictionaries')
+
+
 
 with open(os.path.join(lookup_dir, 'known_words_dict.json'), 'r') as infile:
     known_words_dict = json.load(infile)
@@ -29,6 +29,8 @@ with open(os.path.join(lookup_dir, 'titles_minor_group_ons.json'), 'r') as infil
     titles_mg = json.load(infile)
 
 mg_buckets = pd.read_json(os.path.join(lookup_dir,'mg_buckets_ons_df_processed.json'))
+
+
 
 def lemmatise(title_terms):
     """

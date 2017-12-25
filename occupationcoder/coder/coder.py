@@ -19,7 +19,7 @@ import sys
 # lookup_dir = os.path.join(parent_dir, 'Dictionaries')
 # utility_dir = os.path.join(parent_dir, 'Utilities')
 #sys.path.append(utility_dir)
-import utilities.utilities as utils
+import utilities as utils
 
 inFile = sys.argv[1]
 #outFile = sys.argv[2]

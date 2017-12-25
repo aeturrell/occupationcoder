@@ -13,10 +13,10 @@ import os
 import json
 import pandas as pd
 
-script_dir = os.path.dirname(os.path.abspath(__file__))
-parent_dir = os.path.join(script_dir, '..')
-lookup_dir = os.path.join(parent_dir, 'dictionaries')
-#lookup_dir = os.path.join('..','dictionaries')
+# script_dir = os.path.dirname(os.path.abspath(__file__))
+# parent_dir = os.path.join(script_dir, '..')
+# lookup_dir = os.path.join(parent_dir, 'dictionaries')
+lookup_dir = os.path.join('..','dictionaries')
 print(lookup_dir)
 
 with open(os.path.join(lookup_dir, 'known_words_dict.json'), 'r') as infile:

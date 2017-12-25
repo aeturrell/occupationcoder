@@ -16,7 +16,7 @@ NAME = 'occupationcoder'
 DESCRIPTION = 'A tool to use job text, such as job description, to assign standard occupational classification codes. '
 URL = 'https://github.com/aeturrell/occupation-coder'
 EMAIL = 'a.e.turrell@gmail.com'
-AUTHOR = 'Jyldyz Djumalieva
+AUTHOR = 'Jyldyz Djumalieva'
 
 # What packages are required for this module to be executed?
 REQUIRED = [
@@ -29,7 +29,6 @@ REQUIRED = [
 # If you do change the License, remember to change the Trove Classifier for that!
 
 here = os.path.abspath(os.path.dirname(__file__))
-
 
 
 # Where the magic happens:

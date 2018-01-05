@@ -65,3 +65,4 @@ and the output is in the 'processed_jobs.csv' file in the outputs/ folder.
 - Make the parallel options scalable (so that they are enabled with a single option, or even automatically)
 - Make sure code complies with PEP/usual Python naming conventions
 - Add more jobs to the test file
+- Implement continuous-bag-of-words approach as an alternative (see 'The Evolving U.S. Occupational Structure' by Enghin Atalay, Phai Phongthiengtham, Sebastian Sotelo, and Daniel Tannenbaum)

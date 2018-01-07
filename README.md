@@ -7,11 +7,14 @@ Given a job title, job description, and job sector the algorithm assigns a 3-dig
 This code originally written by Jyldyz Djumalieva, Arthur Turrell, and David Copple. If you use this code please cite:
 "Pretty Vacant: Understanding mismatch in the UK labour market from the bottom-up"
 
-### Installation via terminal
+### Installation via terminal using pip
 Download the package and cd to the download directory. Then use
 ```Terminal
-pip install .
+python setup.py sdist
+cd dist
+pip install occupationalcoder-version.tar.gz
 ```
+The first line creates the .tar.gz file, the second navigates to the directory with the packaged code in, and the third line installs the package. The version number to use will be evident from the name of the .tar.gz file.
 
 ### Running the code as a python package
 Importing, and creating an instance, of the coder

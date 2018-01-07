@@ -14,9 +14,9 @@ from setuptools import find_packages, setup, Command
 # Package meta-data.
 NAME = 'occupationcoder'
 DESCRIPTION = 'A tool to use job text, such as job description, to assign standard occupational classification codes. '
-URL = 'https://github.com/aeturrell/occupation-coder'
+URL = 'https://github.com/aeturrell/occupationcoder'
 EMAIL = 'a.e.turrell@gmail.com'
-AUTHOR = 'Jyldyz Djumalieva'
+AUTHOR = 'Jyldyz Djumalieva and Arthur Turrell'
 
 # What packages are required for this module to be executed?
 REQUIRED = [
@@ -34,7 +34,7 @@ here = os.path.abspath(os.path.dirname(__file__))
 # Where the magic happens:
 setup(
     name=NAME,
-    #version=about['__version__'],
+    version=0.1,
     description=DESCRIPTION,
     # long_description=long_description,
     author=AUTHOR,

@@ -1,4 +1,4 @@
-include testvacancies *
-recursive-include dictionaries *
+include occupationcoder/testvacancies *
+recursive-include occupationcoder/dictionaries *
 include README.md
 include requirements.txt

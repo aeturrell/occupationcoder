@@ -122,6 +122,9 @@ if __name__ == '__main__':
         ("Coding complete. Showing first results..."))
     print(df.head())
     ## Write to csv
-    df.to_csv(os.path.join(output_dir, 'processed_jobs.csv'),
+    df.to_csv(os.path.join(script_dir,
+    'occupationcoder',
+    'outputs',
+    'processed_jobs.csv'),
                   index = False,
                   encoding = 'utf-8')

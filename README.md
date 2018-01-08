@@ -59,4 +59,4 @@ The code to run the test is
 ```
 python -m occupationcoder.coder.coder occupationcoder/testvacancies/test_vacancies.csv
 ```
-and the output is in the 'processed_jobs.csv' file in the outputs/ folder.s
+and the output is in the 'processed_jobs.csv' file in the outputs/ folder.

@@ -21,8 +21,8 @@ import json
 #outFile = sys.argv[2]
 
 script_dir = os.path.dirname(os.path.abspath('__file__'))
-parent_dir = os.path.join(script_dir, '..')
-output_dir = os.path.join(script_dir, 'occupationcoder','outputs')
+parent_dir = os.path.dirname(script_dir)
+output_dir = os.path.join(parent_dir,'outputs')
 util_dir = os.path.join(parent_dir, 'utilities')
 sys.path.append(util_dir)
 # from .utilities import utilities as utils

@@ -4,7 +4,7 @@
 
 Given a job title, job description, and job sector the algorithm assigns a 3-digit standard occupational classification (SOC) code to the job. The algorithm uses the **SOC 2010** standard, more details of which can be found on [the ONS' website](https://www.ons.gov.uk/methodology/classificationsandstandards/standardoccupationalclassificationsoc/soc2010).
 
-This code originally written by Jyldyz Djumalieva, Arthur Turrell, and David Copple. If you use this code please cite:
+This code originally written by Jyldyz Djumalieva, Arthur Turrell, David Copple, James Thurgood, and Bradley Speigner. If you use this code please cite:
 "Pretty Vacant: Understanding mismatch in the UK labour market from the bottom-up"
 
 ### Installation via terminal using pip

@@ -7,6 +7,10 @@ Given a job title, job description, and job sector the algorithm assigns a 3-dig
 This code originally written by Jyldyz Djumalieva, Arthur Turrell, and David Copple. If you use this code please cite:
 "Pretty Vacant: Understanding mismatch in the UK labour market from the bottom-up"
 
+### Pre-requisites
+See requirements.txt for a full list. occupation-coder is built on top of [NLTK](http://www.nltk.org/) and uses the 'wordnet' corpora. When the coder is run, it will expect to find this corpora in the usual directories. If you have nltk installed, you can get this corpora using ```nltk.download()``` or by going to [http://www.nltk.org/nltk_data/](http://www.nltk.org/nltk_data/) and downloading it manually. A couple of the other packages, such as [```fuzzywuzzy```](https://github.com/seatgeek/fuzzywuzzy), do not come with the Anaconda distribution of Python. You can install these via pip (if you have access to the internet) or download the relevant binaries and install them manually.
+
+
 ### Installation via terminal using pip
 Download the package and cd to the download directory. Then use
 ```Terminal

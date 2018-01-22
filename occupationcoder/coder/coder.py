@@ -47,6 +47,9 @@ class Coder:
     def codedataframe(self,df_all):
         # Return an error if user has passed in columns which do not exist in the
         # data frame.
+        # Remove any leading or trailing whitespace from column names
+        df_all = df_all.rename(columns=dict(zip(df_all.columns,
+                                [x.lstrip().rstrip() for x in df_all.columns])))
         for col in self.colsToProcess:
             if col not in df_all.columns:
                 sys.exit( ("Occupationcoder message:\n")+

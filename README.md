@@ -8,7 +8,11 @@ This code originally written by Jyldyz Djumalieva, [Arthur Turrell](http://aetur
 "Pretty Vacant: Understanding mismatch in the UK labour market from the bottom-up"
 
 ### Pre-requisites
-See requirements.txt for a full list. occupation-coder is built on top of [NLTK](http://www.nltk.org/) and uses the 'wordnet' corpora. When the coder is run, it will expect to find this corpora in the usual directories. If you have nltk installed, you can get this corpora using ```nltk.download()``` or by going to [http://www.nltk.org/nltk_data/](http://www.nltk.org/nltk_data/) and downloading it manually. A couple of the other packages, such as [```fuzzywuzzy```](https://github.com/seatgeek/fuzzywuzzy), do not come with the Anaconda distribution of Python. You can install these via pip (if you have access to the internet) or download the relevant binaries and install them manually.
+See requirements.txt for a full list. 
+
+occupationcoder is built on top of [NLTK](http://www.nltk.org/) and uses 'Wordnet' (a corpora, number 82 on their list) and the Punkt Tokenizer Models (number 106 on their list). When the coder is run, it will expect to find these in their usual directories. If you have nltk installed, you can get them corpora using ```nltk.download()``` which will install them in the right directories or you can go to [http://www.nltk.org/nltk_data/](http://www.nltk.org/nltk_data/) to download them manually (and follow the install instructions). 
+
+A couple of the other packages, such as [```fuzzywuzzy```](https://github.com/seatgeek/fuzzywuzzy), do not come with the Anaconda distribution of Python. You can install these via pip (if you have access to the internet) or download the relevant binaries and install them manually.
 
 
 ### Installation via terminal using pip
@@ -64,3 +68,6 @@ The code to run the test is
 python -m occupationcoder.coder.coder occupationcoder/testvacancies/test_vacancies.csv
 ```
 and the output is in the 'processed_jobs.csv' file in the outputs/ folder.
+
+### Acknowledgements
+We are very grateful to Emmet Cassidy for testing an early version of this algorithm.

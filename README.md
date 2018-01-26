@@ -36,7 +36,7 @@ To run the code on a single job, use the following syntax with the ```codejobrow
 if __name__ == '__main__':
     myCoder.codejobrow('Physicist','Calculations of the universe','Professional scientific')
 ```
-Note that you can leave some of the fields blank and the algorithm will still return a SOC code.
+The ```if``` statement is required because the code is parallelised. Note that you can leave some of the fields blank and the algorithm will still return a SOC code.
 
 To run the code on a file (eg csv name 'job_file.csv') with structure
 

@@ -33,7 +33,8 @@ myCoder = coder.Coder()
 ```
 To run the code on a single job, use the following syntax with the ```codejobrow(job_title,job_description,job_sector)``` method:
 ```Python
-myCoder.codejobrow('Physicist','Calculations of the universe','Professional scientific')
+if __name__ == '__main__':
+    myCoder.codejobrow('Physicist','Calculations of the universe','Professional scientific')
 ```
 Note that you can leave some of the fields blank and the algorithm will still return a SOC code.
 

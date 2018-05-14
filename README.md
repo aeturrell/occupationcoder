@@ -72,3 +72,6 @@ and the output is in the 'processed_jobs.csv' file in the outputs/ folder.
 
 ### Acknowledgements
 We are very grateful to Emmet Cassidy for testing an early version of this algorithm.
+
+### Disclaimer
+This code is provided 'as is'. We would love it if you made it better or extended it to work for other countries. All views expressed are our personal views, not those of any employer.

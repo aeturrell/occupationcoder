@@ -49,7 +49,7 @@ setup(
     # },
     install_requires=REQUIRED,
     include_package_data=True,
-    license='Apache2',
+    license='gpl-2.0',
     classifiers=[
         # Trove classifiers
         # Full list: https://pypi.python.org/pypi?%3Aaction=list_classifiers

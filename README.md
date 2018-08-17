@@ -16,6 +16,14 @@ occupationcoder is built on top of [NLTK](http://www.nltk.org/) and uses 'Wordne
 
 A couple of the other packages, such as [```fuzzywuzzy```](https://github.com/seatgeek/fuzzywuzzy), do not come with the Anaconda distribution of Python. You can install these via pip (if you have access to the internet) or download the relevant binaries and install them manually.
 
+### File and folder description
+* ```conda.recipe``` contains code which helps to install the package
+* ```occupationcoder/coder``` applies SOC codes to job descriptions
+* ```occupationcoder/createdictionaries``` turns the ONS' index of SOC code into dictionaries used by ```occupationcoder/coder```
+* ```occupationcoder/dictionaries``` contains the dictionaries used by ```occupationcoder/coder```
+* ```occupationcoder/outputs``` is the default output directory
+* ```occupationcoder/testvacancies``` contains 'test' vacancies to run the code on
+* ```occupationcoder/utilities``` contains helper functions which mostly manipulate strings
 
 ### Installation via terminal using pip
 Download the package and cd to the download directory. Then use
@@ -73,7 +81,7 @@ python -m occupationcoder.coder.coder occupationcoder/testvacancies/test_vacanci
 and the output is in the 'processed_jobs.csv' file in the outputs/ folder.
 
 ### Acknowledgements
-We are very grateful to Emmet Cassidy for testing an early version of this algorithm.
+We are very grateful to Emmet Cassidy for testing this algorithm.
 
 ### Disclaimer
 This code is provided 'as is'. We would love it if you made it better or extended it to work for other countries. All views expressed are our personal views, not those of any employer.

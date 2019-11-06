@@ -6,7 +6,7 @@ Given a job title, job description, and job sector the algorithm assigns a 3-dig
 
 This code originally written by Jyldyz Djumalieva, [Arthur Turrell](http://aeturrell.github.io/home), David Copple, James Thurgood, and Bradley Speigner. If you use this code please cite:
 
-Turrell, A., Speigner, B., Djumalieva, J., Copple, D., and Thurgood, J. (2018). [Using job vacancies to understand the effects of labour market mismatch on UK output and productivity](https://www.bankofengland.co.uk/working-paper/2018/using-job-vacancies-to-understand-the-effects-of-labour-market-mismatch-on-uk-output), Staff Working Paper 737, Bank of England.
+Turrell, A., Speigner, B. J., Djumalieva, J., Copple, D., & Thurgood, J. (2019). [Transforming Naturally Occurring Text Data Into Economic Statistics: The Case of Online Job Vacancy Postings](https://www.nber.org/papers/w25837) (No. w25837). National Bureau of Economic Research.
 
 
 ### Pre-requisites

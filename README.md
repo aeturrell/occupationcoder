@@ -6,7 +6,16 @@ Given a job title, job description, and job sector the algorithm assigns a 3-dig
 
 This code originally written by Jyldyz Djumalieva, [Arthur Turrell](http://aeturrell.github.io/home), David Copple, James Thurgood, and Bradley Speigner. If you use this code please cite:
 
-Turrell, A., Speigner, B. J., Djumalieva, J., Copple, D., & Thurgood, J. (2019). [Transforming Naturally Occurring Text Data Into Economic Statistics: The Case of Online Job Vacancy Postings](https://www.nber.org/papers/w25837) (No. w25837). National Bureau of Economic Research.
+Turrell, A., Speigner, B., Djumalieva, J., Copple, D., & Thurgood, J. (2019). [Transforming Naturally Occurring Text Data Into Economic Statistics: The Case of Online Job Vacancy Postings](https://www.nber.org/papers/w25837) (No. w25837). National Bureau of Economic Research.
+
+```
+@techreport{turrell2019transforming,
+  title={Transforming naturally occurring text data into economic statistics: The case of online job vacancy postings},
+  author={Turrell, Arthur and Speigner, Bradley and Djumalieva, Jyldyz and Copple, David and Thurgood, James},
+  year={2019},
+  institution={National Bureau of Economic Research}
+}
+```
 
 
 ### Pre-requisites

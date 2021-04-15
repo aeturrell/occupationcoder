@@ -115,7 +115,7 @@ class Coder:
 if __name__ == '__main__':
     # Read command line inputs
     inFile = sys.argv[1]
-    df  = pd.read_csv(inFile)
+    df = pd.read_csv(inFile)
     commCoder = Coder()
     df = commCoder.codedataframe(df)
     print(("occupationcoder message:\n")+

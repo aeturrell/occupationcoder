@@ -14,11 +14,11 @@ occupationcoder
         :alt: Documentation Status
 
 
-A tool to use job text, such as job description, to assign standard occupational classification codes
------------------------------------------------------------------------------------------------------
+A tool to assign standard occupational classification codes to job vacancy descriptions
+---------------------------------------------------------------------------------------
 
 Given a job title, job description, and job sector the algorithm assigns
-a 3-digit standard occupational classification (SOC) code to the job.
+a UK 3-digit standard occupational classification (SOC) code to the job.
 The algorithm uses the **SOC 2010** standard, more details of which can
 be found on `the ONS'
 website <https://www.ons.gov.uk/methodology/classificationsandstandards/standardoccupationalclassificationsoc/soc2010>`__.
@@ -67,7 +67,6 @@ and install them manually.
 File and folder description
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
--  ``conda.recipe`` contains code which helps to install the package
 -  ``occupationcoder/coder`` applies SOC codes to job descriptions
 -  ``occupationcoder/createdictionaries`` turns the ONS' index of SOC
    code into dictionaries used by ``occupationcoder/coder``
@@ -160,14 +159,12 @@ assigned SOC codes.
 Testing
 ~~~~~~~
 
-| The test matches to SOC are run on a file of example jobs, in this case job vacancies.
-| The code to run the test is
+To run the tests in your virtual environment, use
 
 .. code::
+    python -m unittest
 
-    python -m occupationcoder.coder.coder occupationcoder/testvacancies/test_vacancies.csv
-
-and the output is in the 'processed\_jobs.csv' file in the outputs/
+in the top level occupationcoder directory. Look in ``test_occupationcoder.py`` for what is run and examples of use. The output appears in the 'processed\_jobs.csv' file in the outputs/
 folder.
 
 Acknowledgements

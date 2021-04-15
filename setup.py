@@ -1,69 +1,52 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 
-# Note: To use the 'upload' functionality of this file, you must:
-#   $ pip install twine
+"""The setup script."""
 
-import io
-import os
-import sys
-from shutil import rmtree
+from setuptools import setup, find_packages
 
-from setuptools import find_packages, setup, Command
+with open('README.rst') as readme_file:
+    readme = readme_file.read()
 
-# Package meta-data.
-NAME = 'occupationcoder'
-DESCRIPTION = 'A tool to use job text, such as job description, to assign standard occupational classification codes. '
-URL = 'https://github.com/aeturrell/occupationcoder'
-EMAIL = 'a.e.turrell@gmail.com'
-AUTHOR = 'Jyldyz Djumalieva and Arthur Turrell'
+with open('HISTORY.rst') as history_file:
+    history = history_file.read()
 
-# What packages are required for this module to be executed?
-REQUIRED = [
-    # 'requests', 'maya', 'records',
-]
+requirements = ['pandas',
+                'scikit-learn',
+                'nltk',
+                'dask',
+                'beautifulsoup4']
 
-# The rest you shouldn't have to touch too much :)
-# ------------------------------------------------
-# Except, perhaps the License and Trove Classifiers!
-# If you do change the License, remember to change the Trove Classifier for that!
+setup_requirements = [ ]
 
-here = os.path.abspath(os.path.dirname(__file__))
+test_requirements = [ ]
 
-
-# Where the magic happens:
 setup(
-    name=NAME,
-    version=0.1,
-    description=DESCRIPTION,
-    # long_description=long_description,
-    author=AUTHOR,
-    author_email=EMAIL,
-    url=URL,
-    packages=find_packages(exclude=('tests',)),
-    # If your package is a single module, use this instead of 'packages':
-    # py_modules=['mypackage'],
-
-    # entry_points={
-    #     'console_scripts': ['mycli=mymodule:cli'],
-    # },
-    install_requires=REQUIRED,
-    include_package_data=True,
-    license='gpl-2.0',
+    author="Arthur Turrell and Jyldyz Djumalieva",
+    author_email='',
+    python_requires='>=3.5',
     classifiers=[
-        # Trove classifiers
-        # Full list: https://pypi.python.org/pypi?%3Aaction=list_classifiers
-        'License :: OSI Approved :: Apache2 License',
-        'Programming Language :: Python',
-        'Programming Language :: Python :: 2.6',
-        'Programming Language :: Python :: 2.7',
+        'Development Status :: 2 - Pre-Alpha',
+        'Intended Audience :: Developers',
+        'License :: OSI Approved :: GNU General Public License v3 (GPLv3)',
+        'Natural Language :: English',
         'Programming Language :: Python :: 3',
-        'Programming Language :: Python :: 3.3',
-        'Programming Language :: Python :: 3.4',
         'Programming Language :: Python :: 3.5',
         'Programming Language :: Python :: 3.6',
-        'Programming Language :: Python :: Implementation :: CPython',
-        'Programming Language :: Python :: Implementation :: PyPy'
+        'Programming Language :: Python :: 3.7',
+        'Programming Language :: Python :: 3.8',
     ],
-
+    description="A tool to use job text, such as job description, to assign standard occupational classification codes.",
+    install_requires=requirements,
+    license="Custom",
+    long_description=readme + '\n\n' + history,
+    include_package_data=True,
+    keywords='occupationcoder',
+    name='occupationcoder',
+    packages=find_packages(include=['occupationcoder', 'occupationcoder.*']),
+    setup_requires=setup_requirements,
+    test_suite='tests',
+    tests_require=test_requirements,
+    url='https://github.com/aeturrell/occupationcoder',
+    version='0.2.0',
+    zip_safe=False,
 )

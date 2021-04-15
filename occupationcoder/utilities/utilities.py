@@ -129,34 +129,47 @@ def replace_punctuation(s):
     return s
 
 
-from HTMLParser import HTMLParser
-class MLStripper(HTMLParser):
-    def __init__(self):
-        self.reset()
-        self.fed = []
-    def handle_data(self, d):
-        self.fed.append(d)
-    def get_data(self):
-        return ' '.join(self.fed)
+from io import StringIO
+from html.parser import HTMLParser
 
+# class MLStripper(HTMLParser):
+#     def __init__(self):
+#         super().__init__()
+#         self.reset()
+#         self.strict = False
+#         self.convert_charrefs= True
+#         self.text = StringIO()
+#     def handle_data(self, d):
+#         self.text.write(d)
+#     def get_data(self):
+#         return self.text.getvalue()
 
+# def strip_tags(html):
+#     """
+#     Takes string as input.
+#     Removes html tags.
+#     Returns a string.
+#     """
+#     s = MLStripper()
+#     s.feed(html)
+#     return s.get_data()
+
+from bs4 import BeautifulSoup
 def strip_tags(html):
     """
     Takes string as input.
     Removes html tags.
     Returns a string.
-
     """
-    s = MLStripper()
-    s.feed(html)
-    return s.get_data()
+    soup = BeautifulSoup(html, features="html.parser")
+    return soup.get_text()
 
 
 def clean_title(dataframe_row):
     """
     Takes string in a dataframe column 'job_title' as input. In sequence applies functions to lemmatise terms,
     expand abbreviations, replace words not in ONS classification, remove digits,
-    remove punctuaiton and extra spaces. This function is adapted to work with
+    remove punctuation and extra spaces. This function is adapted to work with
     dataframe fields and not individual strings.
     Returns a string.
 

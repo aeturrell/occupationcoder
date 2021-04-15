@@ -1,7 +1,5 @@
-#!/usr/bin/env python2
-# -*- coding: utf-8 -*-
-"""
-Created on Mon Dec 11 12:11:22 2017
+"""Top-level package for occupationcoder."""
 
-@author: jdjumalieva
-"""
+__author__ = """Jyldyz Djumalieva and Arthur Turrell"""
+__email__ = ''
+__version__ = '0.2.0'

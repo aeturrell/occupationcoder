@@ -83,7 +83,7 @@ Installation via terminal using pip
 
 Download the package and navigate to the download directory. Then use
 
-.. code:: Terminal
+.. code-block:: shell
 
     python setup.py sdist
     cd dist
@@ -99,7 +99,7 @@ Running the code as a python script
 
 Importing, and creating an instance, of the coder
 
-.. code:: Python
+.. code-block:: python
 
     import pandas as pd
     from occupationcoder.coder import coder
@@ -108,7 +108,7 @@ Importing, and creating an instance, of the coder
 To run the code on a single job, use the following syntax with the
 ``codejobrow(job_title,job_description,job_sector)`` method:
 
-.. code:: Python
+.. code-block:: python
 
     if __name__ == '__main__':
         myCoder.codejobrow('Physicist','Calculations of the universe','Professional scientific')
@@ -127,7 +127,7 @@ To run the code on a file (eg csv name 'job\_file.csv') with structure
 
 use
 
-.. code:: Python
+.. code-block:: python
 
     df = pd.read_csv('path/to/foo.csv')
     df = myCoder.codedataframe(df)
@@ -148,7 +148,7 @@ If you have all the relevant packages in requirements.txt, download the
 code and navigate to the occupationcoder folder (which contains the
 README). Then run
 
-.. code:: Python
+.. code-block:: shell
 
     python -m occupationcoder.coder.coder path/to/foo.csv
 
@@ -161,7 +161,8 @@ Testing
 
 To run the tests in your virtual environment, use
 
-.. code::
+.. code-block:: shell
+
     python -m unittest
 
 in the top level occupationcoder directory. Look in ``test_occupationcoder.py`` for what is run and examples of use. The output appears in the 'processed\_jobs.csv' file in the outputs/

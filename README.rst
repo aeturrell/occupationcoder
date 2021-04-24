@@ -111,7 +111,7 @@ To run the code on a single job, use the following syntax with the
 .. code-block:: python
 
     if __name__ == '__main__':
-        myCoder.codejobrow('Physicist','Calculations of the universe','Professional scientific')
+        myCoder.codejobrow('Physicist', 'Calculations of the universe', 'Professional scientific')
 
 The ``if`` statement is required because the code is parallelised. Note
 that you can leave some of the fields blank and the algorithm will still

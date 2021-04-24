@@ -14,7 +14,9 @@ requirements = ['pandas',
                 'scikit-learn',
                 'nltk',
                 'dask',
-                'beautifulsoup4']
+                'beautifulsoup4',
+                'fuzzywuzzy',
+                'python-Levenshtein']
 
 setup_requirements = [ ]
 

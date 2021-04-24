@@ -5,6 +5,7 @@ Created on Wed Dec  6 11:58:38 2017
 
 @author: jdjumalieva
 """
+from bs4 import BeautifulSoup
 import nltk
 import re
 from sklearn.metrics.pairwise import cosine_similarity
@@ -12,6 +13,7 @@ from sklearn.feature_extraction.text import TfidfVectorizer
 import os
 import json
 import pandas as pd
+from fuzzywuzzy import process
 
 script_dir = os.path.dirname(os.path.abspath(__file__))
 parent_dir = os.path.dirname(script_dir)
@@ -27,8 +29,8 @@ with open(os.path.join(lookup_dir, 'expand_dict.json'), 'r') as infile:
 with open(os.path.join(lookup_dir, 'titles_minor_group_ons.json'), 'r') as infile:
     titles_mg = json.load(infile)
 
-mg_buckets = pd.read_json(os.path.join(lookup_dir,'mg_buckets_ons_df_processed.json'))
-
+mg_buckets = pd.read_json(os.path.join(
+    lookup_dir, 'mg_buckets_ons_df_processed.json'))
 
 
 def lemmatise(title_terms):
@@ -46,11 +48,12 @@ def lemmatise(title_terms):
     ['analytics']
     """
     keep_asis = ['sales', 'years', 'goods', 'operations', 'systems',
-                    'communications', 'events', 'loans', 'grounds',
-                    'lettings', 'claims', 'accounts', 'relations',
-                    'complaints', 'services']
+                 'communications', 'events', 'loans', 'grounds',
+                 'lettings', 'claims', 'accounts', 'relations',
+                 'complaints', 'services']
     wnl = nltk.WordNetLemmatizer()
-    processed_terms = [wnl.lemmatize(i) if i not in keep_asis else i for i in title_terms]
+    processed_terms = [wnl.lemmatize(
+        i) if i not in keep_asis else i for i in title_terms]
     return processed_terms
 
 
@@ -63,7 +66,7 @@ def replace_word(word, lookup_dict):
     >>> replace_word('rgn', expand_dict)
     u'registered general nurse'
     """
-    word=lookup_dict[word]
+    word = lookup_dict[word]
     return word
 
 
@@ -79,7 +82,8 @@ def lookup_replacement(words, lookup_dict):
     """
     keys = lookup_dict.keys()
     this_dict = lookup_dict
-    words = [replace_word(word, this_dict) if word in keys else word for word in words]
+    words = [replace_word(word, this_dict)
+             if word in keys else word for word in words]
     return words
 
 
@@ -113,7 +117,9 @@ def remove_digits(s):
     return result
 
 
-select_punct = set('!"#$%&\()*+,-./:;<=>?@[\\]^_`{|}~') #only removed "'"
+select_punct = set('!"#$%&\()*+,-./:;<=>?@[\\]^_`{|}~')  # only removed "'"
+
+
 def replace_punctuation(s):
     """
     Takes string as input.
@@ -129,32 +135,6 @@ def replace_punctuation(s):
     return s
 
 
-from io import StringIO
-from html.parser import HTMLParser
-
-# class MLStripper(HTMLParser):
-#     def __init__(self):
-#         super().__init__()
-#         self.reset()
-#         self.strict = False
-#         self.convert_charrefs= True
-#         self.text = StringIO()
-#     def handle_data(self, d):
-#         self.text.write(d)
-#     def get_data(self):
-#         return self.text.getvalue()
-
-# def strip_tags(html):
-#     """
-#     Takes string as input.
-#     Removes html tags.
-#     Returns a string.
-#     """
-#     s = MLStripper()
-#     s.feed(html)
-#     return s.get_data()
-
-from bs4 import BeautifulSoup
 def strip_tags(html):
     """
     Takes string as input.
@@ -195,9 +175,10 @@ def clean_title(dataframe_row):
     known = replace_unknown(' '.join(exp)).strip()
     nodigits = remove_digits(known)
     nopunct = replace_punctuation(nodigits)
-    nospace = re.sub(' +',' ',nopunct)
+    nospace = re.sub(' +', ' ', nopunct)
     nospace = nospace.strip()
     return nospace
+
 
 def clean_desc(dataframe_row):
     """
@@ -212,9 +193,10 @@ def clean_desc(dataframe_row):
     lemm = lemmatise(lower.split())
     exp = lookup_replacement(lemm, expand_dict)
     nopunct = replace_punctuation(' '.join(exp))
-    nospace = re.sub(' +',' ',nopunct)
+    nospace = re.sub(' +', ' ', nopunct)
     nospace = nospace.strip()
     return nospace
+
 
 def clean_sector(dataframe_row):
     """
@@ -248,7 +230,7 @@ def clean_sector(dataframe_row):
     lower = replace_punctuation(dataframe_row['job_sector'].lower())
     replaced = lower.replace('other', ' ')
     exp = lookup_replacement(replaced.split(), expand_dict)
-    nospace = re.sub(' +',' ',' '.join(exp))
+    nospace = re.sub(' +', ' ', ' '.join(exp))
     nospace = nospace.strip()
     return nospace
 
@@ -308,15 +290,15 @@ def get_best_score_top5_2(dataframe_row):
     >>> get_best_score_top5_2('community nurse')
     ['331', '612', '323', '614', '223']
     """
-    textfortoken= mg_buckets.Titles_nospace
+    textfortoken = mg_buckets.Titles_nospace
     tfidf = TfidfVectorizer(tokenizer=tokenize,
-                                stop_words='english',
-                                ngram_range=(1,3))
+                            stop_words='english',
+                            ngram_range=(1, 3))
     tfidfm = tfidf.fit_transform(textfortoken)
     new_i = tfidf.transform([dataframe_row])
     known_titles = tfidfm
     cosine_similarities = cosine_similarity(new_i, known_titles)
-    best = cosine_similarities.argsort()[0,-5:]
+    best = cosine_similarities.argsort()[0, -5:]
     result = []
     append = result.append
     for b in best:
@@ -356,8 +338,7 @@ def extract(some_string, some_list):
     'director of recruitment', 'management consultant'])
     ('recruitment coordinator', 76)
     """
-    from fuzzywuzzy import process
-    opt = process.extractOne(str(some_string), some_list)
+    opt = process.extractOne(some_string, some_list)
     return opt
 
 
@@ -397,23 +378,24 @@ def return_best_match_2(dataframe_row):
     99               (614, (care assistant, 90, 4))
     dtype: object
     """
-    codes = dataframe_row['top5']
+    codes = list(map(str, dataframe_row['top5']))
     index = codes.index
-    options ={}
+    options = {}
     items = options.items
     for c in codes:
         if dataframe_row['title_nospace'] != '':
-            good_opt = extract(str(dataframe_row['title_nospace']), titles_mg[c])
+            good_opt = extract(dataframe_row['title_nospace'], titles_mg[c])
             if good_opt[1] == 0:
                 options[c] = ('None', '0')
             else:
-                options[c]=(good_opt[0], good_opt[1], index(c))
-            final_code = max(items(), key = lambda x: getKey(x[1]))
+                options[c] = (good_opt[0], good_opt[1], index(c))
+            final_code = max(items(), key=lambda x: getKey(x[1]))
         else:
             final_code = (codes[4], ('None'))
     return final_code
 
-def ascii_convert(cols,dfIn):
+
+def ascii_convert(cols, dfIn):
     """
     Function cleans ascii input and converts everything to strings in unicode
     """

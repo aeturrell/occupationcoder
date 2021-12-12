@@ -1,0 +1,38 @@
+cff-version: 1.2.0
+message: "If you use this software, please cite it as below."
+authors:
+- family-names: "Turrell"
+  given-names: "Arthur"
+  orcid: "https://orcid.org/0000-0002-2525-0773"
+- family-names: "Speigner"
+  given-names: "Bradley"
+- family-names: "Djumalieva"
+  given-names: "Jyldyz"
+- family-names: "Copple"
+  given-names: "David"
+- family-names: "Thurgood"
+  given-names: "James"
+title: "occupationcoder"
+version: 1.0.0
+doi: 10.3386/w25837
+date-released: 2019-05-01
+url: "https://github.com/aeturrell/occupationcoder"
+preferred-citation:
+  type: techreport
+  authors:
+  - family-names: "Turrell"
+    given-names: "Arthur"
+    orcid: "https://orcid.org/0000-0002-2525-0773"
+  - family-names: "Speigner"
+    given-names: "Bradley"
+  - family-names: "Djumalieva"
+    given-names: "Jyldyz"
+  - family-names: "Copple"
+    given-names: "David"
+  - family-names: "Thurgood"
+    given-names: "James"
+  doi: "10.3386/w25837"
+  journal: "National Bureau of Economic Research Working Papers"
+  title: "Transforming Naturally Occurring Text Data Into Economic Statistics: The Case of Online Job Vacancy Postings"
+  year: 2019
+  number: "No. w25837"

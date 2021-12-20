@@ -1,13 +1,14 @@
 # -*- coding: utf-8 -*-
 """Main module."""
 
-import dask
-import dask.dataframe as dd
-import pandas as pd
 import os
 import sys
+import time
+
+import dask.dataframe as dd
+import pandas as pd
+
 from occupationcoder.utilities import utilities as utils
-import json
 
 
 #inFile = sys.argv[1]
@@ -123,7 +124,10 @@ if __name__ == '__main__':
     inFile = sys.argv[1]
     df = pd.read_csv(inFile)
     commCoder = Coder()
+    proc_tic = time.perf_counter()
     df = commCoder.codedataframe(df)
+    proc_toc = time.perf_counter()
+    print("Actual coding ran in: {}".format(proc_toc - proc_tic))
     print(("occupationcoder message:\n") +
           ("Coding complete. Showing first results..."))
     print(df.head())

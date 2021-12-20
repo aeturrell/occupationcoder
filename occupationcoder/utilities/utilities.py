@@ -5,9 +5,7 @@ Created on Wed Dec  6 11:58:38 2017
 
 @author: jdjumalieva
 """
-from bs4 import BeautifulSoup
 import nltk
-import re
 from sklearn.metrics.pairwise import cosine_similarity
 from sklearn.feature_extraction.text import TfidfVectorizer
 import os
@@ -15,224 +13,17 @@ import json
 import pandas as pd
 from fuzzywuzzy import process
 
+from ..coder.cleaner import clean_title, clean_desc, clean_sector
+
 script_dir = os.path.dirname(os.path.abspath(__file__))
 parent_dir = os.path.dirname(script_dir)
 lookup_dir = os.path.join(parent_dir, 'dictionaries')
-
-
-with open(os.path.join(lookup_dir, 'known_words_dict.json'), 'r') as infile:
-    known_words_dict = json.load(infile)
-
-with open(os.path.join(lookup_dir, 'expand_dict.json'), 'r') as infile:
-    expand_dict = json.load(infile)
 
 with open(os.path.join(lookup_dir, 'titles_minor_group_ons.json'), 'r') as infile:
     titles_mg = json.load(infile)
 
 mg_buckets = pd.read_json(os.path.join(
     lookup_dir, 'mg_buckets_ons_df_processed.json'))
-
-
-def lemmatise(title_terms):
-    """
-    Takes list as input.
-    Removes suffixes if the new words exists in the nltk dictionary.
-    The purpose of the function is to convert plural forms into singular.
-    Allows some nouns to remain in plural form (the to_keep_asis is manually curated).
-    Returns a list.
-
-    >>> lemmatise(['teachers'])
-    u'teacher']
-
-    >>> lemmatise(['analytics'])
-    ['analytics']
-    """
-    keep_asis = ['sales', 'years', 'goods', 'operations', 'systems',
-                 'communications', 'events', 'loans', 'grounds',
-                 'lettings', 'claims', 'accounts', 'relations',
-                 'complaints', 'services']
-    wnl = nltk.WordNetLemmatizer()
-    processed_terms = [wnl.lemmatize(
-        i) if i not in keep_asis else i for i in title_terms]
-    return processed_terms
-
-
-def replace_word(word, lookup_dict):
-    """
-    Takes string and a look up dictionary as input.
-    The input string is used as a key in a dictionary. Function returns a value
-    in a string format for the specified key in a provided dictionary.
-
-    >>> replace_word('rgn', expand_dict)
-    u'registered general nurse'
-    """
-    word = lookup_dict[word]
-    return word
-
-
-def lookup_replacement(words, lookup_dict):
-    """
-    Takes a list and a dict as input, replaces words in the list if they exist
-    in the dict as keys with corresponding values .
-    Returns a list.
-    This function is used to expand abbreviations.
-
-    >>> lookup_replacement(['pa', 'to', 'vice', 'president'], expand_dict)
-    [u'personal assistant', 'to', 'vice', 'president']
-    """
-    keys = lookup_dict.keys()
-    this_dict = lookup_dict
-    words = [replace_word(word, this_dict)
-             if word in keys else word for word in words]
-    return words
-
-
-def replace_unknown(s):
-    """
-    Takes a string and a ONS known words dict as input.
-    Only keeps the words that exist in ONS title words.
-    Returns a string.
-
-    >>> replace_unknown('high court enforcement agent london x2')
-    'high court enforcement agent'
-    """
-    all_words = s.split()
-    tokeep = []
-    keys = known_words_dict.keys()
-    tokeep = [i for i in all_words if i in keys]
-    clean_words = ' '.join(tokeep)
-    return clean_words
-
-
-def remove_digits(s):
-    """
-    Takes a string as input.
-    Removes digits in a string.
-    Returns a string.
-
-    >>> remove_digits('2 recruitment consultants')
-    ' recruitment consultants'
-    """
-    result = ''.join(i for i in s if not i.isdigit())
-    return result
-
-
-select_punct = set('!"#$%&\()*+,-./:;<=>?@[\\]^_`{|}~')  # only removed "'"
-
-
-def replace_punctuation(s):
-    """
-    Takes string as input.
-    Removes punctuation from a string if the character is in select_punct.
-    Returns a string.
-
-   >>> replace_punctuation('sales executives/ - london')
-   'sales executives   london'
-    """
-    for i in set(select_punct):
-        if i in s:
-            s = s.replace(i, ' ')
-    return s
-
-
-def strip_tags(html):
-    """
-    Takes string as input.
-    Removes html tags.
-    Returns a string.
-    """
-    soup = BeautifulSoup(html, features="html.parser")
-    return soup.get_text()
-
-
-def clean_title(dataframe_row):
-    """
-    Takes string in a dataframe column 'job_title' as input. In sequence applies functions to lemmatise terms,
-    expand abbreviations, replace words not in ONS classification, remove digits,
-    remove punctuation and extra spaces. This function is adapted to work with
-    dataframe fields and not individual strings.
-    Returns a string.
-
-    >>> sample_df['job_title']
-    0             recruitment consultant  be your own boss
-    1    financial consultant£4284633462 plus bonus an...
-    2    dutch speaking contact services representative...
-    3                               care assistant  worker
-    4                               care assistant  worker
-    Name: job_title, dtype: object
-
-    >>> sample_df.apply(lambda x: clean_title(x), axis=1)
-    0             recruitment consultant
-    1       financial plus bonus and car
-    2    contact services representative
-    3              care assistant worker
-    4              care assistant worker
-    dtype: object
-    """
-    lower = strip_tags(dataframe_row['job_title']).lower()
-    lemm = lemmatise(lower.split())
-    exp = lookup_replacement(lemm, expand_dict)
-    known = replace_unknown(' '.join(exp)).strip()
-    nodigits = remove_digits(known)
-    nopunct = replace_punctuation(nodigits)
-    nospace = re.sub(' +', ' ', nopunct)
-    nospace = nospace.strip()
-    return nospace
-
-
-def clean_desc(dataframe_row):
-    """
-    Takes string in a dataframe field 'job_description' as input. In sequence
-    applies functions to lemmatise terms, expand abbreviations, remove punctuaiton
-    and extra spaces. This function is adapted to work with dataframe fields
-    and not individual strings.
-    Returns a string.
-
-    """
-    lower = strip_tags(dataframe_row['job_description']).lower()
-    lemm = lemmatise(lower.split())
-    exp = lookup_replacement(lemm, expand_dict)
-    nopunct = replace_punctuation(' '.join(exp))
-    nospace = re.sub(' +', ' ', nopunct)
-    nospace = nospace.strip()
-    return nospace
-
-
-def clean_sector(dataframe_row):
-    """
-    Takes string in a dataframe field 'job_sector' as input. In sequence
-    applies functions to collapse case, replace 'other' with ' ', expand
-    abbreviations, remove punctuaiton and extra spaces.
-    This function is adapted to work with dataframe fields and not individual
-    strings.
-    Returns a string.
-
-    >>> sample_df['job_sector']
-
-    93                Social Care
-    94     Hospitality & Catering
-    95    Recruitment Consultancy
-    96                Social Care
-    97             Marketing & PR
-    98                   Training
-    Name: job_sector, dtype: object
-
-    >>> sample_df.apply(lambda x: clean_sector(x), axis=1)
-
-    93                social care
-    94       hospitality catering
-    95    recruitment consultancy
-    96                social care
-    97               marketing pr
-    98                   training
-    dtype: object
-    """
-    lower = replace_punctuation(dataframe_row['job_sector'].lower())
-    replaced = lower.replace('other', ' ')
-    exp = lookup_replacement(replaced.split(), expand_dict)
-    nospace = re.sub(' +', ' ', ' '.join(exp))
-    nospace = nospace.strip()
-    return nospace
 
 
 def exact_match(some_title):

@@ -4,7 +4,7 @@ import json
 import pandas as pd
 
 from nltk import word_tokenize
-from fuzzywuzzy import process, fuzz
+from rapidfuzz import process, fuzz
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
 
@@ -57,17 +57,18 @@ class MixedMatcher:
         best = sim_scores.argsort()[0, -top_n:]
         return [self.mg_buckets.SOC_code[SOC_code] for SOC_code in best]
 
-    def get_best_fuzzy_match(self, text):
-
+    def get_best_fuzzy_match(self, text, detailed_return=False):
+        """
+        Uses get_tfidf_match to narrow the options down to five possible SOC codes,
+        then uses partial token set ratio in fuzzywuzzy to check against all individual
+        job descriptions.
+        """
         best_fit_codes = self.get_tfidf_match(text)
 
-        options = {}
+        options = []
 
         # Iterate through the best options TF-IDF similarity suggests
         for SOC_code in best_fit_codes:
-
-            if not SOC_code:
-                return (best_fit_codes[4], (None))
 
             # Clean descriptions
             clean_SOC_descriptions = [cl.simple_clean(description) for description in self.titles_mg[SOC_code]]
@@ -75,13 +76,22 @@ class MixedMatcher:
 
             # Handle non-match by looking at match score
             if best_fuzzy_match[1] == 0:
-                options[SOC_code] = (None, '0')
+                options.append((None, 0, None))
             else:
                 # Record best match, the score, and the associated SOC code
-                options[SOC_code] = (best_fuzzy_match[0],
-                                     best_fuzzy_match[1],
-                                     text[:50])
+                options.append((best_fuzzy_match[0],
+                                best_fuzzy_match[1],
+                                SOC_code))
 
-        # TODO: IMPLEMENT SELECTION OF BEST
-        return options
-        # return max(options.items(), key=lambda x: x[1])
+        # The most probable industries are last - sort so that most probable are first,
+        # In case of a draw, max will take first value only
+        options.reverse()
+        best = max(options, key=lambda x: x[1])
+
+        # Return the best code, or code and diagnostics
+        if detailed_return:
+            return best
+        return best[2]
+
+    def dask_fuzzy_match(self, dataframe_row):
+        return self.get_best_fuzzy_match(dataframe_row['title_and_desc'])

@@ -13,7 +13,7 @@ from occupationcoder.coder import coder
 import occupationcoder.coder.cleaner as cl
 import occupationcoder.coder.code_matcher as cm
 
-EXPONENT = 1
+EXPONENT = 2
 
 
 class TestOccupationcoder(unittest.TestCase):
@@ -24,9 +24,9 @@ class TestOccupationcoder(unittest.TestCase):
         # The expected cleaned titles to our test data
         self.expected_titles = ['physicist', 'economist', 'ground worker']
         # The SOC codes that TFIDF is expected to suggest for the three examples
-        self.expected_codes = [242, 311, 212, 215, 211,
-                               353, 412, 215, 242, 211,
-                               242, 533, 243, 912, 323]
+        self.expected_codes = ['242', '311', '212', '215', '211',
+                               '353', '412', '215', '242', '211',
+                               '242', '533', '243', '912', '323']
 
         self.test_df = pd.read_csv(os.path.join("tests", "test_vacancies.csv"))
 
@@ -34,7 +34,7 @@ class TestOccupationcoder(unittest.TestCase):
         for i in range(EXPONENT):
             self.test_df = pd.concat([self.test_df.copy(), self.test_df.copy()], ignore_index=True)
         self.test_df = self.test_df.reset_index()
-        print("Size of test dataset: {}".format(self.test_df.shape[0]))
+        # print("Size of test dataset: {}".format(self.test_df.shape[0]))
 
         # Instantiate matching class
         self.matcher = cm.MixedMatcher()
@@ -44,40 +44,45 @@ class TestOccupationcoder(unittest.TestCase):
 
     def test_clean_titles(self):
         """ Checks that results of title cleaning are as expected """
-        for index, row in self.test_df.iterrows():
-            clean = cl.clean_title(row)
-            self.assertIn(clean, self.expected_titles)
+        clean_titles = self.test_df['job_title'].apply(cl.simple_clean)
+        for title in clean_titles:
+            self.assertIn(title, self.expected_titles)
 
     def test_code_exact_matcher(self):
         """ Results of exact title matching """
-        for index, row in self.test_df.iterrows():
-            # Create whole-text string
-            clean = cl.clean_title(row)
-            match = self.matcher.get_exact_match(clean)
+        clean_titles = self.test_df['job_title'].apply(cl.simple_clean)
+        matches = clean_titles.apply(self.matcher.get_exact_match)
+        for match in matches:
             self.assertIn(match, ['211', '242', None])
 
     def test_code_tfidf_matcher(self):
         """ TF-IDF similarity suggestions for categories? """
-        for index, row in self.test_df.iterrows():
-            clean = " ".join([cl.clean_title(row), cl.clean_sector(row), cl.clean_desc(row)])
+        df = self.test_df.copy()
+        df['clean_title'] = df['job_title'].apply(cl.simple_clean)
+        df['clean_sector'] = df['job_sector'].apply(lambda x: cl.simple_clean(x, known_only=False))
+        df['clean_desc'] = df['job_description'].apply(lambda x: cl.simple_clean(x, known_only=False))
+
+        for index, row in df.iterrows():
+            clean = " ".join([row['clean_title'], row['clean_sector'], row['clean_desc']])
             SOC_codes = self.matcher.get_tfidf_match(clean)
             for code in SOC_codes:
                 self.assertIn(code, self.expected_codes)
 
     def test_code_fuzzy_matcher(self):
-        """ For now, just tests that it runs """
-        for index, row in self.test_df.iterrows():
-            clean = " ".join([cl.clean_title(row), cl.clean_sector(row), cl.clean_desc(row)])
+        """ For now, just tests that it runs - this is the expensive thing! """
+        df = self.test_df.copy()
+        df['clean_title'] = df['job_title'].apply(cl.simple_clean)
+        df['clean_sector'] = df['job_sector'].apply(lambda x: cl.simple_clean(x, known_only=False))
+        df['clean_desc'] = df['job_description'].apply(lambda x: cl.simple_clean(x, known_only=False))
+
+        for index, row in df.iterrows():
+            clean = " ".join([row['clean_title'], row['clean_sector'], row['clean_desc']])
             best_match = self.matcher.get_best_fuzzy_match(clean)
-            print(row['job_title'])
-            for index, value in best_match.items():
-                print(index, value[1], value[0])
-            print("\n")
 
     def test_000_code_single_row_in_script(self):
         """Running the base example in a script."""
         myCoder = coder.Coder()
-        answer = myCoder.codejobrow('Physicist',
+        answer = myCoder.code_job_row('Physicist',
                                     'Calculations of the universe',
                                     'Professional scientific')
         self.assertEqual(answer['SOC_code'].iloc[0], '211')
@@ -86,7 +91,7 @@ class TestOccupationcoder(unittest.TestCase):
         """Running the included examples from a file."""
         myCoder = coder.Coder()
         df = pd.read_csv(os.path.join('tests', 'test_vacancies.csv'))
-        df = myCoder.codedataframe(df)
+        df = myCoder.code_data_frame(df)
         self.assertEqual(df['SOC_code'].to_list(), ['211', '242', '912'])
 
     def test_002_command_line_use(self):

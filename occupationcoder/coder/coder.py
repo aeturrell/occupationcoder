@@ -7,6 +7,7 @@ import time
 
 import numpy as np
 import pandas as pd
+# import modin.pandas as pd
 
 from occupationcoder.coder import cleaner as cl
 from occupationcoder.coder import code_matcher as cm
@@ -98,8 +99,8 @@ if __name__ == '__main__':
     df = commCoder.code_data_frame(df)
     proc_toc = time.perf_counter()
     print("Actual coding ran in: {}".format(proc_toc - proc_tic))
-    print(("occupationcoder message:\n") +
-          ("Coding complete. Showing first results..."))
+    print("occupationcoder message:\n" +
+          "Coding complete. Showing first results...")
     print(df.head())
     # Write to csv
     df.to_csv(os.path.join(script_dir,

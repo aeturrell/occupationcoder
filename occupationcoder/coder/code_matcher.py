@@ -22,6 +22,11 @@ class MixedMatcher:
         with open(os.path.join(lookup_dir, 'titles_minor_group_ons.json'), 'r') as infile:
             self.titles_mg = json.load(infile, parse_int=str)
 
+        # Clean the job titles lists with the same code that will be used for the record titles/sectors/descriptions
+        for SOC_code in self.titles_mg.keys():
+            self.titles_mg[SOC_code] = [cl.simple_clean(title, known_only=False)
+                                        for title in self.titles_mg[SOC_code]]
+
         self.mg_buckets = pd.read_json(os.path.join(lookup_dir, 'mg_buckets_ons_df_processed.json'))\
                             .astype(str)
 
@@ -71,8 +76,7 @@ class MixedMatcher:
         for SOC_code in best_fit_codes:
 
             # Clean descriptions
-            clean_SOC_descriptions = [cl.simple_clean(description) for description in self.titles_mg[SOC_code]]
-            best_fuzzy_match = process.extractOne(text, clean_SOC_descriptions, scorer=fuzz.token_set_ratio)
+            best_fuzzy_match = process.extractOne(text, self.titles_mg[SOC_code], scorer=fuzz.token_set_ratio)
 
             # Handle non-match by looking at match score
             if best_fuzzy_match[1] == 0:
@@ -92,6 +96,3 @@ class MixedMatcher:
         if detailed_return:
             return best
         return best[2]
-
-    def dask_fuzzy_match(self, dataframe_row):
-        return self.get_best_fuzzy_match(dataframe_row['title_and_desc'])

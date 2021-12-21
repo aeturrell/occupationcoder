@@ -3,17 +3,19 @@
 """Tests for `occupationcoder` package."""
 
 import unittest
+import time
 import sys
 import os
 import subprocess
 
 import pandas as pd
+# import modin.pandas as pd
 
 from occupationcoder.coder import coder
 import occupationcoder.coder.cleaner as cl
 import occupationcoder.coder.code_matcher as cm
 
-EXPONENT = 2
+EXPONENT = 8
 
 
 class TestOccupationcoder(unittest.TestCase):
@@ -28,13 +30,8 @@ class TestOccupationcoder(unittest.TestCase):
                                '353', '412', '215', '242', '211',
                                '242', '533', '243', '912', '323']
 
+        # Load the three example records
         self.test_df = pd.read_csv(os.path.join("tests", "test_vacancies.csv"))
-
-        # Multiply up that dataset to many, many rows so we can test time taken
-        for i in range(EXPONENT):
-            self.test_df = pd.concat([self.test_df.copy(), self.test_df.copy()], ignore_index=True)
-        self.test_df = self.test_df.reset_index()
-        # print("Size of test dataset: {}".format(self.test_df.shape[0]))
 
         # Instantiate matching class
         self.matcher = cm.MixedMatcher()
@@ -106,3 +103,24 @@ class TestOccupationcoder(unittest.TestCase):
                                       'outputs',
                                       'processed_jobs.csv'))
         self.assertEqual(df['SOC_code'].to_list(), [211, 242, 912])
+
+    def manual_load_test(self):
+        """
+        Look at execution speed.
+        Vanilla pandas:  768 records in 295 seconds.
+        Modin pandas: 768 records in 212 seconds.
+        """
+        # Multiply up that dataset to many, many rows so we can test time taken
+        for i in range(EXPONENT):
+            self.test_df = pd.concat([self.test_df.copy(), self.test_df.copy()], ignore_index=True)
+        self.test_df = self.test_df.reset_index()
+        print("Size of test dataset: {}".format(self.test_df.shape[0]))
+
+        # Instantiate coder class
+        myCoder = coder.Coder()
+
+        # Time only the actual code assignment process
+        proc_tic = time.perf_counter()
+        df = myCoder.code_data_frame(self.test_df)
+        proc_toc = time.perf_counter()
+        print("Actual coding step ran in: {}".format(proc_toc - proc_tic))

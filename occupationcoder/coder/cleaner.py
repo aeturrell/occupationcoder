@@ -3,7 +3,9 @@ import nltk
 import re
 import os
 import json
-import pandas as pd
+
+from nltk.corpus import stopwords
+STOPWORDS = stopwords.words('english')
 
 script_dir = os.path.dirname(os.path.abspath(__file__))
 parent_dir = os.path.dirname(script_dir)
@@ -49,6 +51,9 @@ def simple_clean(text: str, known_only=True):
     # Filter out words not present in the vocabulary we're matching to
     if known_only:
         tokens = [token for token in tokens if token in list(known_words_dict.keys())]
+
+    # Filter out stopwords
+    tokens = [token for token in tokens if token not in STOPWORDS]
 
     return " ".join(tokens)
 

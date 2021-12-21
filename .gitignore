@@ -1,6 +1,7 @@
 # OS generated files #
 ######################
 .DS_Store
+dask-worker-space/
 
 # Outputs folder
 Outputs/

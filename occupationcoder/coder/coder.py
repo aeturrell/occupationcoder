@@ -12,6 +12,10 @@ import pandas as pd
 from occupationcoder.coder import cleaner as cl
 from occupationcoder.coder import code_matcher as cm
 
+# Initialises Dask environment
+# from distributed import Client
+# client = Client()
+
 #inFile = sys.argv[1]
 #outFile = sys.argv[2]
 

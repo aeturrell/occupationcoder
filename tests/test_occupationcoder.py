@@ -15,7 +15,7 @@ from occupationcoder.coder import coder
 import occupationcoder.coder.cleaner as cl
 import occupationcoder.coder.code_matcher as cm
 
-EXPONENT = 8
+EXPONENT = 10
 
 
 class TestOccupationcoder(unittest.TestCase):
@@ -107,8 +107,7 @@ class TestOccupationcoder(unittest.TestCase):
     def manual_load_test(self):
         """
         Look at execution speed.
-        Vanilla pandas:  768 records in 295 seconds.
-        Modin pandas: 768 records in 212 seconds.
+        Vanilla pandas:  3072 records in ~52 seconds on my laptop
         """
         # Multiply up that dataset to many, many rows so we can test time taken
         for i in range(EXPONENT):
@@ -123,4 +122,4 @@ class TestOccupationcoder(unittest.TestCase):
         proc_tic = time.perf_counter()
         df = myCoder.code_data_frame(self.test_df)
         proc_toc = time.perf_counter()
-        print("Actual coding step ran in: {}".format(proc_toc - proc_tic))
+        print("Coding process ran in: {}".format(proc_toc - proc_tic))

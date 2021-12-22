@@ -47,6 +47,11 @@ class MixedMatcher:
         # Store the matrix of SOC TF-IDF vectors
         self._SOC_tfidf_matrix = self._tfidf.fit_transform(self.mg_buckets.Titles_nospace)
 
+        # Placeholder, column names for fields needed for coding
+        self.df_columns = {"title": None,
+                           "sector": None,
+                           "description": None}
+
     def get_exact_match(self, title: str):
         """ If exists, finds exact match to a job title's first three words """
         title = ' '.join(title.split()[:3])
@@ -107,7 +112,14 @@ class MixedMatcher:
         return best[2]
 
     def code_record(self, title: str, sector: str = None, description: str = None):
-        """ Codes an individual job record, with optional title and description """
+        """
+        Codes an individual job title, with optional sector and description text
+
+        Keyword arguments:
+            title -- freetext job title to find a SOC code for
+            sector -- any additional description of industry/sector
+            description -- freetext description of work/role/duties
+        """
         clean_title = simple_clean(title)
 
         # Try to code using exact title match (and save a lot of computation
@@ -131,61 +143,32 @@ class MixedMatcher:
         # Find best fuzzy match possible with the data
         return self.get_best_fuzzy_match(all_text)
 
-    def code_row(self, row):
-        return self.code_record(row['job_title'],
-                                row['job_sector'],
-                                row['job_description'])
+    def _code_row(self, row):
+        """ Helper for applying code_record over the rows of a pandas DataFrame"""
+        return self.code_record(row[self.df_columns['title']],
+                                row[self.df_columns['sector']],
+                                row[self.df_columns['description']])
 
-    def code_data_frame_simple(self, df_all):
-        df_all['SOC_code'] = df_all.apply(self.code_row, axis=1)
-        return df_all
-
-    def code_data_frame(self, df_all: pd.DataFrame,
-                        title_column: str = "job_title",
-                        sector_column: str = "job_sector",
-                        description_column: str = "job_description"):
+    def code_data_frame(self, record_df,
+                        title_column: str = 'job_title',
+                        sector_column: str = None,
+                        description_column: str = None):
         """
-        Utility method for coding an entire pandas dataframe - gains some
-        speed by using DF-specific methods to apply functions and filter data
+        Applies tool to all rows in a provided pandas DataFrame
+
+        Keyword arguments:
+            record_df -- Pandas dataframe containing columns named:
+            title_column -- Freetext job title to find a SOC code for (default 'job_title')
+            sector_column -- Any additional description of industry/sector (default None)
+            description_column -- Freetext description of work/role/duties (default None)
         """
-        # Test for missing data columns
-        cols_to_process = [title_column, sector_column, description_column]
-        for col in cols_to_process:
-            if col not in df_all.columns:
-                sys.exit("Occupationcoder message:\n" +
-                         "Please ensure a " + col +
-                         " column exists in your dataframe")
+        # Record the column names for later
+        self.df_columns.update({"title": title_column,
+                                "sector": sector_column,
+                                "description": description_column})
 
-        # Select and copy only data required for coding
-        df = df_all.copy()\
-                   .rename(columns=dict(zip(df_all.columns,
-                                            [x.lstrip().rstrip()
-                                             for x in df_all.columns])))[cols_to_process]
-
-        # Apply the cleaning function
-        df['clean_title'] = df[title_column].apply(simple_clean)
-        df['clean_sector'] = df[sector_column].apply(lambda x: simple_clean(x, known_only=False))
-        df['clean_desc'] = df[description_column].apply(lambda x: simple_clean(x, known_only=False))
-
-        # Combine cleaned job title, sector and description
-        df['all_text'] = df[['clean_title', 'clean_sector', 'clean_desc']]\
-            .apply(lambda x: ' '.join(x), axis=1)
-
-        # Drop unused columns
-        df.drop(['clean_sector', 'clean_desc'], inplace=True, axis=1)
-
-        # Part II: Processing
-        # Check for exact matches
-        df['SOC_code'] = df['clean_title'].apply(lambda x: self.get_exact_match(x))
-
-        # Apply fuzzy matching where no exact match is found
-        df['SOC_code'] = np.where(df['SOC_code'].isna(),
-                                  df['all_text'].apply(self.get_best_fuzzy_match),
-                                  df['SOC_code'])
-
-        # Return SOC_code to original dataframe, which contains all other columns
-        df_all.loc[:, 'SOC_code'] = df.loc[:, 'SOC_code']
-        return df_all
+        record_df['SOC_code'] = record_df.apply(self._code_row, axis=1)
+        return record_df
 
 
 # Define main function. Main operations are placed here to make it possible
@@ -196,7 +179,10 @@ if __name__ == '__main__':
     df = pd.read_csv(inFile)
     commCoder = MixedMatcher()
     proc_tic = time.perf_counter()
-    df = commCoder.code_data_frame(df)
+    df = commCoder.code_data_frame(df,
+                                   title_column="job_title",
+                                   sector_column="job_sector",
+                                   description_column="job_description")
     proc_toc = time.perf_counter()
     print("Actual coding ran in: {}".format(proc_toc - proc_tic))
     print("occupationcoder message:\n" +

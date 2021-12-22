@@ -83,13 +83,16 @@ class TestOccupationcoder(unittest.TestCase):
 
         self.assertEqual(result, '211')
 
-    def test_001_running_on_a_file(self):
+    def test_code_data_frame(self):
         """Running the included examples from a file."""
         df = pd.read_csv(os.path.join('tests', 'test_vacancies.csv'))
-        df = self.matcher.code_data_frame_simple(df)
+        df = self.matcher.code_data_frame(df,
+                                          title_column="job_title",
+                                          sector_column="job_sector",
+                                          description_column="job_description")
         self.assertEqual(df['SOC_code'].to_list(), ['211', '242', '912'])
 
-    def test_002_command_line_use(self):
+    def test_command_line(self):
         """ Test code execution at command line """
 
         # sys.executable returns current python executable, ensures code is run
@@ -105,7 +108,7 @@ class TestOccupationcoder(unittest.TestCase):
     def manual_load_test(self):
         """
         Look at execution speed.
-        Vanilla pandas:  3072 records in ~52 seconds on my laptop
+        Vanilla pandas:  15000 records in ~52 seconds on my laptop
         """
         # Multiply up that dataset to many, many rows so we can test time taken
         big_df = self.test_df.sample(SAMPLE_SIZE, replace=True, ignore_index=True)
@@ -113,7 +116,10 @@ class TestOccupationcoder(unittest.TestCase):
 
         # Time only the actual code assignment process
         proc_tic = time.perf_counter()
-        _ = self.matcher.code_data_frame_simple(big_df)
+        _ = self.matcher.code_data_frame(big_df,
+                                         title_column="job_title",
+                                         sector_column="job_sector",
+                                         description_column="job_description")
         print(_.shape)
         print(_[['job_title', 'SOC_code']].head(5))
         proc_toc = time.perf_counter()

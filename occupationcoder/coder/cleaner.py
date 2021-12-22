@@ -30,7 +30,11 @@ def simple_clean(text: str, known_only=True):
     """
     Takes string as input, cleans, lowercases, tokenizes and lemmatises,
     before replacing some known tokens with synonyms and optionally filtering
-    to only known words.
+    to only known (job title) words.
+
+    Keyword arguments:
+        text -- String representing human freetext to clean up
+        known_only -- Bool, whether to filter to only known job title words (default True)
     """
     # Handle unexpected datatypes
     if type(text) != str:
@@ -40,7 +44,7 @@ def simple_clean(text: str, known_only=True):
     text = re.sub(r"[^a-z ]", " ", text.lower())  # Keep only letters and spaces, lowercase
     text = re.sub(' +', ' ', text).strip()   # Remove excess whitespace
 
-    # Lemmatize tokens
+    # Lemmatise tokens
     tokens = [wnl.lemmatize(token) if token not in KEEP_AS_IS else token
               for token in text.split()]
 

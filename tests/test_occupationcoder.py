@@ -13,7 +13,6 @@ import pandas as pd
 
 from occupationcoder.coder import coder
 import occupationcoder.coder.cleaner as cl
-import occupationcoder.coder.code_matcher as cm
 
 SAMPLE_SIZE = 1000
 
@@ -34,7 +33,7 @@ class TestOccupationcoder(unittest.TestCase):
         self.test_df = pd.read_csv(os.path.join("tests", "test_vacancies.csv"))
 
         # Instantiate matching class
-        self.matcher = cm.MixedMatcher()
+        self.matcher = coder.MixedMatcher()
 
     def tearDown(self):
         """Tear down test fixtures, if any."""
@@ -76,13 +75,13 @@ class TestOccupationcoder(unittest.TestCase):
             clean = " ".join([row['clean_title'], row['clean_sector'], row['clean_desc']])
             best_match = self.matcher.get_best_fuzzy_match(clean)
 
-    def test_000_code_single_row_in_script(self):
-        """Running the base example in a script."""
-        myCoder = coder.Coder()
-        answer = myCoder.code_job_row('Physicist',
-                                    'Calculations of the universe',
-                                    'Professional scientific')
-        self.assertEqual(answer['SOC_code'].iloc[0], '211')
+    def test_code_record(self):
+        """ Confirm it correctly runs on our example single record """
+        result = self.matcher.code_record(title='Physicist',
+                                          sector='Professional scientific',
+                                          description='Calculations of the universe')
+
+        self.assertEqual(result, '211')
 
     def test_001_running_on_a_file(self):
         """Running the included examples from a file."""

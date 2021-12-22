@@ -14,7 +14,7 @@ import pandas as pd
 from occupationcoder.coder import coder
 import occupationcoder.coder.cleaner as cl
 
-SAMPLE_SIZE = 1000
+SAMPLE_SIZE = 15000
 
 
 class TestOccupationcoder(unittest.TestCase):
@@ -85,9 +85,8 @@ class TestOccupationcoder(unittest.TestCase):
 
     def test_001_running_on_a_file(self):
         """Running the included examples from a file."""
-        myCoder = coder.Coder()
         df = pd.read_csv(os.path.join('tests', 'test_vacancies.csv'))
-        df = myCoder.code_data_frame(df)
+        df = self.matcher.code_data_frame_simple(df)
         self.assertEqual(df['SOC_code'].to_list(), ['211', '242', '912'])
 
     def test_002_command_line_use(self):
@@ -112,11 +111,10 @@ class TestOccupationcoder(unittest.TestCase):
         big_df = self.test_df.sample(SAMPLE_SIZE, replace=True, ignore_index=True)
         print("Size of test dataset: {}".format(big_df.shape[0]))
 
-        # Instantiate coder class
-        myCoder = coder.Coder()
-
         # Time only the actual code assignment process
         proc_tic = time.perf_counter()
-        _ = myCoder.code_data_frame(big_df)
+        _ = self.matcher.code_data_frame_simple(big_df)
+        print(_.shape)
+        print(_[['job_title', 'SOC_code']].head(5))
         proc_toc = time.perf_counter()
         print("Coding process ran in: {}".format(proc_toc - proc_tic))

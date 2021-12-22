@@ -106,7 +106,7 @@ class MixedMatcher:
             return best
         return best[2]
 
-    def code_record(self, title: str, sector: str=None, description: str=None):
+    def code_record(self, title: str, sector: str = None, description: str = None):
         """ Codes an individual job record, with optional title and description """
         clean_title = simple_clean(title)
 
@@ -116,7 +116,7 @@ class MixedMatcher:
             return match
 
         # Gather all text data
-        all_text = clean_title.copy()
+        all_text = clean_title
 
         # Process sector
         if sector:
@@ -131,44 +131,41 @@ class MixedMatcher:
         # Find best fuzzy match possible with the data
         return self.get_best_fuzzy_match(all_text)
 
+    def code_row(self, row):
+        return self.code_record(row['job_title'],
+                                row['job_sector'],
+                                row['job_description'])
 
-class Coder:
-    """
+    def code_data_frame_simple(self, df_all):
+        df_all['SOC_code'] = df_all.apply(self.code_row, axis=1)
+        return df_all
 
-    Codes job titles and descriptions into Standard Occupational
-    Classification codes
-
-    """
-    # Columns needed for coding
-    cols_to_process = ['job_title', 'job_description', 'job_sector']
-
-    def __init__(self):
-        self.data = []
-        self.matcher = MixedMatcher()
-
-    def code_data_frame(self, df_all):
-        # Return an error if user has passed in columns which do not exist in the
-        # data frame.
-        # Remove any leading or trailing whitespace from column names
-
+    def code_data_frame(self, df_all: pd.DataFrame,
+                        title_column: str = "job_title",
+                        sector_column: str = "job_sector",
+                        description_column: str = "job_description"):
+        """
+        Utility method for coding an entire pandas dataframe - gains some
+        speed by using DF-specific methods to apply functions and filter data
+        """
         # Test for missing data columns
-        for col in self.cols_to_process:
+        cols_to_process = [title_column, sector_column, description_column]
+        for col in cols_to_process:
             if col not in df_all.columns:
-                sys.exit(("Occupationcoder message:\n") +
-                         ("Please ensure a " + col +
-                          " column exists in your csv file"))
+                sys.exit("Occupationcoder message:\n" +
+                         "Please ensure a " + col +
+                         " column exists in your dataframe")
 
         # Select and copy only data required for coding
-        # TODO Fix inefficient memory use here
         df = df_all.copy()\
                    .rename(columns=dict(zip(df_all.columns,
                                             [x.lstrip().rstrip()
-                                             for x in df_all.columns])))[self.cols_to_process]
+                                             for x in df_all.columns])))[cols_to_process]
 
         # Apply the cleaning function
-        df['clean_title'] = df['job_title'].apply(simple_clean)
-        df['clean_sector'] = df['job_sector'].apply(lambda x: simple_clean(x, known_only=False))
-        df['clean_desc'] = df['job_description'].apply(lambda x: simple_clean(x, known_only=False))
+        df['clean_title'] = df[title_column].apply(simple_clean)
+        df['clean_sector'] = df[sector_column].apply(lambda x: simple_clean(x, known_only=False))
+        df['clean_desc'] = df[description_column].apply(lambda x: simple_clean(x, known_only=False))
 
         # Combine cleaned job title, sector and description
         df['all_text'] = df[['clean_title', 'clean_sector', 'clean_desc']]\
@@ -179,11 +176,11 @@ class Coder:
 
         # Part II: Processing
         # Check for exact matches
-        df['SOC_code'] = df['clean_title'].apply(lambda x: self.matcher.get_exact_match(x))
+        df['SOC_code'] = df['clean_title'].apply(lambda x: self.get_exact_match(x))
 
         # Apply fuzzy matching where no exact match is found
         df['SOC_code'] = np.where(df['SOC_code'].isna(),
-                                  df['all_text'].apply(self.matcher.get_best_fuzzy_match),
+                                  df['all_text'].apply(self.get_best_fuzzy_match),
                                   df['SOC_code'])
 
         # Return SOC_code to original dataframe, which contains all other columns
@@ -197,7 +194,7 @@ if __name__ == '__main__':
     # Read command line inputs
     inFile = sys.argv[1]
     df = pd.read_csv(inFile)
-    commCoder = Coder()
+    commCoder = MixedMatcher()
     proc_tic = time.perf_counter()
     df = commCoder.code_data_frame(df)
     proc_toc = time.perf_counter()

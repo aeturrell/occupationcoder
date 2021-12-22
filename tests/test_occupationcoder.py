@@ -15,7 +15,7 @@ from occupationcoder.coder import coder
 import occupationcoder.coder.cleaner as cl
 import occupationcoder.coder.code_matcher as cm
 
-EXPONENT = 10
+SAMPLE_SIZE = 1000
 
 
 class TestOccupationcoder(unittest.TestCase):
@@ -110,16 +110,14 @@ class TestOccupationcoder(unittest.TestCase):
         Vanilla pandas:  3072 records in ~52 seconds on my laptop
         """
         # Multiply up that dataset to many, many rows so we can test time taken
-        for i in range(EXPONENT):
-            self.test_df = pd.concat([self.test_df.copy(), self.test_df.copy()], ignore_index=True)
-        self.test_df = self.test_df.reset_index()
-        print("Size of test dataset: {}".format(self.test_df.shape[0]))
+        big_df = self.test_df.sample(SAMPLE_SIZE, replace=True, ignore_index=True)
+        print("Size of test dataset: {}".format(big_df.shape[0]))
 
         # Instantiate coder class
         myCoder = coder.Coder()
 
         # Time only the actual code assignment process
         proc_tic = time.perf_counter()
-        df = myCoder.code_data_frame(self.test_df)
+        _ = myCoder.code_data_frame(big_df)
         proc_toc = time.perf_counter()
         print("Coding process ran in: {}".format(proc_toc - proc_tic))

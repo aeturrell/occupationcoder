@@ -10,12 +10,11 @@ with open('README.rst') as readme_file:
 with open('HISTORY.rst') as history_file:
     history = history_file.read()
 
-requirements = ['pandas',
+requirements = ['numpy',
+                'pandas',
                 'scikit-learn',
                 'nltk',
-                'dask',
-                'beautifulsoup4',
-                'fuzzywuzzy',
+                'rapidfuzz',
                 'python-Levenshtein']
 
 setup_requirements = [ ]

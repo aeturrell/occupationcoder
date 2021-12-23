@@ -9,12 +9,11 @@ import os
 import subprocess
 
 import pandas as pd
-# import modin.pandas as pd
 
-from occupationcoder.coder import coder
-import occupationcoder.coder.cleaner as cl
+from occupationcoder import coder
+import occupationcoder.cleaner as cl
 
-SAMPLE_SIZE = 15000
+SAMPLE_SIZE = 100000
 
 
 class TestOccupationcoder(unittest.TestCase):
@@ -33,7 +32,7 @@ class TestOccupationcoder(unittest.TestCase):
         self.test_df = pd.read_csv(os.path.join("tests", "test_vacancies.csv"))
 
         # Instantiate matching class
-        self.matcher = coder.MixedMatcher()
+        self.matcher = coder.SOCCoder()
 
     def tearDown(self):
         """Tear down test fixtures, if any."""
@@ -64,17 +63,6 @@ class TestOccupationcoder(unittest.TestCase):
             for code in SOC_codes:
                 self.assertIn(code, self.expected_codes)
 
-    def test_code_fuzzy_matcher(self):
-        """ For now, just tests that it runs - this is the expensive thing! """
-        df = self.test_df.copy()
-        df['clean_title'] = df['job_title'].apply(cl.simple_clean)
-        df['clean_sector'] = df['job_sector'].apply(lambda x: cl.simple_clean(x, known_only=False))
-        df['clean_desc'] = df['job_description'].apply(lambda x: cl.simple_clean(x, known_only=False))
-
-        for index, row in df.iterrows():
-            clean = " ".join([row['clean_title'], row['clean_sector'], row['clean_desc']])
-            best_match = self.matcher.get_best_fuzzy_match(clean)
-
     def test_code_record(self):
         """ Confirm it correctly runs on our example single record """
         result = self.matcher.code_record(title='Physicist',
@@ -92,13 +80,22 @@ class TestOccupationcoder(unittest.TestCase):
                                           description_column="job_description")
         self.assertEqual(df['SOC_code'].to_list(), ['211', '242', '912'])
 
+    def test_parallel_code_data_frame(self):
+        """Running the included examples from a file."""
+        df = pd.read_csv(os.path.join('tests', 'test_vacancies.csv'))
+        df = self.matcher.parallel_code_data_frame(df,
+                                                   title_column="job_title",
+                                                   sector_column="job_sector",
+                                                   description_column="job_description")
+        self.assertEqual(df['SOC_code'].to_list(), ['211', '242', '912'])
+
     def test_command_line(self):
         """ Test code execution at command line """
 
         # sys.executable returns current python executable, ensures code is run
         # in same environment from which tests are called
         subprocess.run([sys.executable, '-m',
-                        'occupationcoder.coder.coder',
+                        'occupationcoder.coder',
                         'tests/test_vacancies.csv'])
         df = pd.read_csv(os.path.join('occupationcoder',
                                       'outputs',
@@ -108,7 +105,7 @@ class TestOccupationcoder(unittest.TestCase):
     def manual_load_test(self):
         """
         Look at execution speed.
-        Vanilla pandas:  15000 records in ~52 seconds on my laptop
+        On test machine:  50k short records in ~308s
         """
         # Multiply up that dataset to many, many rows so we can test time taken
         big_df = self.test_df.sample(SAMPLE_SIZE, replace=True, ignore_index=True)
@@ -120,6 +117,26 @@ class TestOccupationcoder(unittest.TestCase):
                                          title_column="job_title",
                                          sector_column="job_sector",
                                          description_column="job_description")
+        print(_.shape)
+        print(_[['job_title', 'SOC_code']].head(5))
+        proc_toc = time.perf_counter()
+        print("Coding process ran in: {}".format(proc_toc - proc_tic))
+
+    def manual_parallel_load_test(self):
+        """
+        Look at execution speed of parallel implementation.
+        On test machine: 100k short records in ~160s
+        """
+        # Multiply up that dataset to many, many rows so we can test time taken
+        big_df = self.test_df.sample(SAMPLE_SIZE, replace=True, ignore_index=True)
+        print("Size of test dataset: {}".format(big_df.shape[0]))
+
+        # Time only the actual code assignment process
+        proc_tic = time.perf_counter()
+        _ = self.matcher.parallel_code_data_frame(big_df,
+                                                  title_column="job_title",
+                                                  sector_column="job_sector",
+                                                  description_column="job_description")
         print(_.shape)
         print(_[['job_title', 'SOC_code']].head(5))
         proc_toc = time.perf_counter()

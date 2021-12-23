@@ -1,1 +1,0 @@
-"""coder init for occupationcoder."""

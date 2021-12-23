@@ -8,7 +8,7 @@ STOPWORDS = stopwords.words('english')
 
 script_dir = os.path.dirname(os.path.abspath(__file__))
 parent_dir = os.path.dirname(script_dir)
-lookup_dir = os.path.join(parent_dir, 'dictionaries')
+lookup_dir = os.path.join(script_dir, 'dictionaries')
 
 # If we put this here we only have to instantiate it once...
 wnl = nltk.WordNetLemmatizer()

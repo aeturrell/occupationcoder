@@ -8,7 +8,6 @@ import time
 
 import numpy as np
 import pandas as pd
-# import modin.pandas as pd
 
 # NLP related packages to support fuzzy-matching
 from nltk import word_tokenize
@@ -16,15 +15,16 @@ from rapidfuzz import process, fuzz
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
 
-from occupationcoder.coder.cleaner import simple_clean
+# Relative imports are cool and no one can tell me otherwise
+from .cleaner import simple_clean
 
 script_dir = os.path.dirname(os.path.abspath(__file__))
 parent_dir = os.path.dirname(script_dir)
-lookup_dir = os.path.join(parent_dir, 'dictionaries')
-output_dir = os.path.join(os.path.dirname(parent_dir), 'outputs')
+lookup_dir = os.path.join(script_dir, 'dictionaries')
+output_dir = os.path.join(os.path.dirname(script_dir), 'outputs')
 
 
-class MixedMatcher:
+class SOCCoder:
     def __init__(self, lookup_dir=lookup_dir):
 
         # Load up the titles lists, ensure codes are loaded as strings...
@@ -76,18 +76,19 @@ class MixedMatcher:
         best = sim_scores.argsort()[0, -top_n:]
         return [self.mg_buckets.SOC_code[SOC_code] for SOC_code in best]
 
-    def get_best_fuzzy_match(self, text, detailed_return=False):
+    def get_best_fuzzy_match(self, text: str, candidate_codes, detailed_return=False):
         """
-        Uses get_tfidf_match to narrow the options down to five possible SOC codes,
-        then uses partial token set ratio in fuzzywuzzy to check against all individual
-        job descriptions.
-        """
-        best_fit_codes = self.get_tfidf_match(text)
+        Uses partial token set ratio in fuzzywuzzy to check against all individual
+        job titles.
 
+        Keyword arguments:
+            text -- string, job title, to compare to job titles for candidate codes
+            candidate_codes -- list of potential SOC codes worth checking against
+        """
         options = []
 
         # Iterate through the best options TF-IDF similarity suggests
-        for SOC_code in best_fit_codes:
+        for SOC_code in candidate_codes:
 
             # Clean descriptions
             best_fuzzy_match = process.extractOne(text, self.titles_mg[SOC_code], scorer=fuzz.token_set_ratio)
@@ -140,8 +141,10 @@ class MixedMatcher:
             clean_description = simple_clean(description, known_only=False)
             all_text = all_text + " " + clean_description
 
+        best_fit_codes = self.get_tfidf_match(all_text)
+
         # Find best fuzzy match possible with the data
-        return self.get_best_fuzzy_match(all_text)
+        return self.get_best_fuzzy_match(clean_title, best_fit_codes)
 
     def _code_row(self, row):
         """ Helper for applying code_record over the rows of a pandas DataFrame"""
@@ -170,6 +173,38 @@ class MixedMatcher:
         record_df['SOC_code'] = record_df.apply(self._code_row, axis=1)
         return record_df
 
+    def parallel_code_data_frame(self, record_df,
+                                 title_column: str = 'job_title',
+                                 sector_column: str = None,
+                                 description_column: str = None):
+        """
+        Applies tool to all rows in a provided pandas DataFrame
+
+        Keyword arguments:
+            record_df -- Pandas dataframe containing columns named:
+            title_column -- Freetext job title to find a SOC code for (default 'job_title')
+            sector_column -- Any additional description of industry/sector (default None)
+            description_column -- Freetext description of work/role/duties (default None)
+        """
+        # Import in function because that way it doesn't matter if modin isn't installed
+        import modin.pandas as mpd
+
+        # Initialises something Dask needs to parallelise operations
+        from distributed import Client
+        client = Client()
+
+        # Record the column names for later
+        self.df_columns.update({"title": title_column,
+                                "sector": sector_column,
+                                "description": description_column})
+
+        # Overwrite to save memory after conversion to Modin DataFrame
+        record_df = mpd.DataFrame(record_df)
+        record_df['SOC_code'] = record_df.apply(self._code_row, axis=1)
+
+        # Hack a private method to convert back to Pandas DataFrame
+        return record_df._to_pandas()
+
 
 # Define main function. Main operations are placed here to make it possible
 # use multiprocessing in Windows.
@@ -177,7 +212,7 @@ if __name__ == '__main__':
     # Read command line inputs
     inFile = sys.argv[1]
     df = pd.read_csv(inFile)
-    commCoder = MixedMatcher()
+    commCoder = SOCCoder()
     proc_tic = time.perf_counter()
     df = commCoder.code_data_frame(df,
                                    title_column="job_title",

@@ -105,7 +105,8 @@ class TestOccupationcoder(unittest.TestCase):
     def manual_load_test(self):
         """
         Look at execution speed.
-        On test machine:  50k short records in ~308s
+        On test machine:  50k short records in ~308s.
+        Does not execute as part of automated tests.
         """
         # Multiply up that dataset to many, many rows so we can test time taken
         big_df = self.test_df.sample(SAMPLE_SIZE, replace=True, ignore_index=True)
@@ -125,7 +126,8 @@ class TestOccupationcoder(unittest.TestCase):
     def manual_parallel_load_test(self):
         """
         Look at execution speed of parallel implementation.
-        On test machine: 100k short records in ~160s
+        On test machine: 100k short records in ~160s.
+        Does not execute as part of automated tests.
         """
         # Multiply up that dataset to many, many rows so we can test time taken
         big_df = self.test_df.sample(SAMPLE_SIZE, replace=True, ignore_index=True)

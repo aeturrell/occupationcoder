@@ -15,7 +15,8 @@ requirements = ['numpy',
                 'scikit-learn',
                 'nltk',
                 'rapidfuzz',
-                'python-Levenshtein']
+                'python-Levenshtein',
+                'modin[dask]']
 
 setup_requirements = [ ]
 

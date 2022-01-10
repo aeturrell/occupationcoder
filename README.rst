@@ -60,7 +60,7 @@ install them in the right directories or you can go to
 download them manually (and follow the install instructions).
 
 A couple of the other packages, such as
-`fuzzywuzzy <https://github.com/seatgeek/fuzzywuzzy>`__ do not come
+`rapidfuzz <https://pypi.org/project/rapidfuzz/>`__ do not come
 with the Anaconda distribution of Python. You can install these via pip
 (if you have access to the internet) or download the relevant binaries
 and install them manually.
@@ -68,11 +68,11 @@ and install them manually.
 File and folder description
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
--  ``occupationcoder/coder`` applies SOC codes to job descriptions
+-  ``occupationcoder/coder/coder.py`` applies SOC codes to job descriptions
 -  ``occupationcoder/createdictionaries`` turns the ONS' index of SOC
    code into dictionaries used by ``occupationcoder/coder``
 -  ``occupationcoder/dictionaries`` contains the dictionaries used by
-   ``occupationcoder/coder``
+   ``occupationcoder/coder/coder.py``
 -  ``occupationcoder/outputs`` is the default output directory
 -  ``occupationcoder/testvacancies`` contains 'test' vacancies to run
    the code on
@@ -88,7 +88,7 @@ Download the package and navigate to the download directory. Then use
 
     python setup.py sdist
     cd dist
-    pip install occupationcoder-version.tar.gz
+    pip install occupationcoder-<version>.tar.gz
 
 The first line creates the .tar.gz file, the second navigates to the
 directory with the packaged code in, and the third line installs the
@@ -103,19 +103,18 @@ Importing, and creating an instance, of the coder
 .. code-block:: python
 
     import pandas as pd
-    from occupationcoder.coder import coder
-    myCoder = coder.Coder()
+    from occupationcoder import coder
+    myCoder = coder.SOCCoder()
 
-To run the code on a single job, use the following syntax with the
-``codejobrow(job_title,job_description,job_sector)`` method:
+To run the code with a single query, use the following syntax with the
+``code_record(job_title,job_description,job_sector)`` method:
 
 .. code-block:: python
 
     if __name__ == '__main__':
-        myCoder.codejobrow('Physicist', 'Calculations of the universe', 'Professional scientific')
+        myCoder.code_record('Physicist', 'Calculations of the universe', 'Professional scientific')
 
-The ``if`` statement is required because the code is parallelised. Note
-that you can leave some of the fields blank and the algorithm will still
+Note that you can leave some of the fields blank and the algorithm will still
 return a SOC code.
 
 To run the code on a file (eg csv name 'job\_file.csv') with structure
@@ -131,8 +130,9 @@ use
 .. code-block:: python
 
     df = pd.read_csv('path/to/foo.csv')
-    df = myCoder.codedataframe(df)
+    df = myCoder.code_data_frame(df, title_column='job_title', sector_column='job_sector', description_column='job_description')
 
+The column name arguments are optional, shown above are default values.  
 This will return a new dataframe with SOC code entries appended in a new
 column:
 
@@ -151,7 +151,7 @@ README). Then run
 
 .. code-block:: shell
 
-    python -m occupationcoder.coder.coder path/to/foo.csv
+    python -m occupationcoder.coder path/to/foo.csv
 
 This will create a 'processed\_jobs.csv' file in the outputs/ folder
 which has the original text and an extra 'SOC\_code' column with the
@@ -166,7 +166,7 @@ To run the tests in your virtual environment, use
 
     python -m unittest
 
-in the top level occupationcoder directory. Look in ``test_occupationcoder.py`` for what is run and examples of use. The output appears in the 'processed\_jobs.csv' file in the outputs/
+in the top level occupationcoder directory. Look in ``test_occupationcoder.py`` for what is run and for examples of use. The output appears in the 'processed\_jobs.csv' file in the outputs/
 folder.
 
 Acknowledgements

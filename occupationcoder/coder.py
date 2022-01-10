@@ -6,7 +6,6 @@ import json
 import sys
 import time
 
-import numpy as np
 import pandas as pd
 
 # NLP related packages to support fuzzy-matching
@@ -21,7 +20,7 @@ from .cleaner import simple_clean
 script_dir = os.path.dirname(os.path.abspath(__file__))
 parent_dir = os.path.dirname(script_dir)
 lookup_dir = os.path.join(script_dir, 'dictionaries')
-output_dir = os.path.join(os.path.dirname(script_dir), 'outputs')
+output_dir = os.path.join(script_dir, 'outputs')
 
 
 class SOCCoder:

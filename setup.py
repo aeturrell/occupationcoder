@@ -45,7 +45,7 @@ setup(
     include_package_data=True,
     keywords='occupationcoder',
     name='occupationcoder',
-    packages=find_packages(include=['occupationcoder', 'occupationcoder.*']),
+    packages=find_packages(include=['occupationcoder', 'coder.*', './']),
     setup_requires=setup_requirements,
     test_suite='tests',
     tests_require=test_requirements,

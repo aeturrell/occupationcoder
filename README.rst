@@ -68,16 +68,16 @@ and install them manually.
 File and folder description
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
--  ``occupationcoder/coder/coder.py`` applies SOC codes to job descriptions
--  ``occupationcoder/createdictionaries`` turns the ONS' index of SOC
-   code into dictionaries used by ``occupationcoder/coder``
--  ``occupationcoder/dictionaries`` contains the dictionaries used by
-   ``occupationcoder/coder/coder.py``
--  ``occupationcoder/outputs`` is the default output directory
--  ``occupationcoder/testvacancies`` contains 'test' vacancies to run
-   the code on
--  ``occupationcoder/utilities`` contains helper functions which mostly
+-  ``occupationcoder/coder.py`` applies SOC codes to job descriptions
+-  ``occupationcoder/cleaner.py`` contains helper function which mostly
    manipulate strings
+-  ``occupationcoder/createdictionaries`` turns the ONS' index of SOC
+   code into dictionaries used by ``occupationcoder/coder.py``
+-  ``occupationcoder/dictionaries`` contains the dictionaries used by
+   ``occupationcoder/coder.py``
+-  ``occupationcoder/outputs`` is the default output directory
+-  ``occupationcoder/tests/test_vacancies.csv`` contains 'test' vacancies 
+   to run the code on, used by unittests, accessible by you!
 
 Installation via terminal using pip
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -103,8 +103,8 @@ Importing, and creating an instance, of the coder
 .. code-block:: python
 
     import pandas as pd
-    from occupationcoder import coder
-    myCoder = coder.SOCCoder()
+    from occupationcoder.coder import SOCCoder
+    myCoder = SOCCoder()
 
 To run the code with a single query, use the following syntax with the
 ``code_record(job_title,job_description,job_sector)`` method:

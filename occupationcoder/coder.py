@@ -27,15 +27,18 @@ class SOCCoder:
     def __init__(self, lookup_dir=lookup_dir):
 
         # Load up the titles lists, ensure codes are loaded as strings...
-        with open(os.path.join(lookup_dir, 'titles_minor_group_ons.json'), 'r') as infile:
+        with open(os.path.join(lookup_dir, 'titles_minor_group_ons.json'),
+                  'r') as infile:
             self.titles_mg = json.load(infile, parse_int=str)
 
-        # Clean the job titles lists with the same code that will be used for the record titles/sectors/descriptions
+        # Clean the job titles lists with the same code as for records
         for SOC_code in self.titles_mg.keys():
             self.titles_mg[SOC_code] = [simple_clean(title, known_only=False)
                                         for title in self.titles_mg[SOC_code]]
 
-        self.mg_buckets = pd.read_json(os.path.join(lookup_dir, 'mg_buckets_ons_df_processed.json'))\
+        self.mg_buckets = pd.read_json(os.path.join(
+                                          lookup_dir,
+                                          'mg_buckets_ons_df_processed.json'))\
                             .astype(str)
 
         # Build the TF-IDF model
@@ -44,7 +47,9 @@ class SOCCoder:
                                       ngram_range=(1, 3))
 
         # Store the matrix of SOC TF-IDF vectors
-        self._SOC_tfidf_matrix = self._tfidf.fit_transform(self.mg_buckets.Titles_nospace)
+        self._SOC_tfidf_matrix = self\
+            ._tfidf\
+            .fit_transform(self.mg_buckets.Titles_nospace)
 
         # Placeholder, column names for fields needed for coding
         self.df_columns = {"title": None,
@@ -75,14 +80,15 @@ class SOCCoder:
         best = sim_scores.argsort()[0, -top_n:]
         return [self.mg_buckets.SOC_code[SOC_code] for SOC_code in best]
 
-    def get_best_fuzzy_match(self, text: str, candidate_codes, detailed_return=False):
+    def get_best_fuzzy_match(self, text: str, candidate_codes,
+                             detailed_return=False):
         """
-        Uses partial token set ratio in fuzzywuzzy to check against all individual
-        job titles.
+        Uses partial token set ratio in fuzzywuzzy to check against all
+        individual job titles.
 
         Keyword arguments:
-            text -- string, job title, to compare to job titles for candidate codes
-            candidate_codes -- list of potential SOC codes worth checking against
+            text -- string, job title, to compare to job titles for codes
+            candidate_codes -- list of potential SOC codes worth checking
         """
         options = []
 
@@ -90,7 +96,9 @@ class SOCCoder:
         for SOC_code in candidate_codes:
 
             # Clean descriptions
-            best_fuzzy_match = process.extractOne(text, self.titles_mg[SOC_code], scorer=fuzz.token_set_ratio)
+            best_fuzzy_match = process.extractOne(text,
+                                                  self.titles_mg[SOC_code],
+                                                  scorer=fuzz.token_set_ratio)
 
             # Handle non-match by looking at match score
             if best_fuzzy_match[1] == 0:
@@ -101,8 +109,8 @@ class SOCCoder:
                                 best_fuzzy_match[1],
                                 SOC_code))
 
-        # The most probable industries are last - sort so that most probable are first,
-        # In case of a draw, max will take first value only
+        # The most probable industries are last - sort so that most probable
+        # are first, in case of a draw, max will take first value only
         options.reverse()
         best = max(options, key=lambda x: x[1])
 
@@ -111,9 +119,11 @@ class SOCCoder:
             return best
         return best[2]
 
-    def code_record(self, title: str, sector: str = None, description: str = None):
+    def code_record(self, title: str, sector: str = None,
+                    description: str = None):
         """
-        Codes an individual job title, with optional sector and description text
+        Codes an individual job title, with optional sector
+        and description text
 
         Keyword arguments:
             title -- freetext job title to find a SOC code for
@@ -146,7 +156,9 @@ class SOCCoder:
         return self.get_best_fuzzy_match(clean_title, best_fit_codes)
 
     def _code_row(self, row):
-        """ Helper for applying code_record over the rows of a pandas DataFrame"""
+        """
+        Helper for applying code_record over the rows of a pandas DataFrame
+        """
         return self.code_record(row[self.df_columns['title']],
                                 row[self.df_columns['sector']],
                                 row[self.df_columns['description']])
@@ -160,9 +172,11 @@ class SOCCoder:
 
         Keyword arguments:
             record_df -- Pandas dataframe containing columns named:
-            title_column -- Freetext job title to find a SOC code for (default 'job_title')
-            sector_column -- Any additional description of industry/sector (default None)
-            description_column -- Freetext description of work/role/duties (default None)
+            title_column -- Freetext job title (default 'job_title')
+            sector_column -- additional description of industry/sector
+                             (default None)
+            description_column -- Freetext description of work/role/duties
+                                  (default None)
         """
         # Record the column names for later
         self.df_columns.update({"title": title_column,
@@ -181,11 +195,14 @@ class SOCCoder:
 
         Keyword arguments:
             record_df -- Pandas dataframe containing columns named:
-            title_column -- Freetext job title to find a SOC code for (default 'job_title')
-            sector_column -- Any additional description of industry/sector (default None)
-            description_column -- Freetext description of work/role/duties (default None)
+            title_column -- Freetext job title to find SOC code
+                            (default 'job_title')
+            sector_column -- Any description of industry/sector (default None)
+            description_column -- Freetext description of work/role/duties
+                                  (default None)
         """
-        # Import in function because that way it doesn't matter if modin isn't installed
+        # Import within function, makes class/module friendly to systems that
+        # don't have modin installed and don't intend to use the function
         import modin.pandas as mpd
 
         # Initialises something Dask needs to parallelise operations
@@ -202,7 +219,9 @@ class SOCCoder:
         record_df['SOC_code'] = record_df.apply(self._code_row, axis=1)
 
         # Hack a private method to convert back to Pandas DataFrame
-        return record_df._to_pandas()
+        result = record_df._to_pandas()
+        client.close()
+        return result
 
 
 # Define main function. Main operations are placed here to make it possible

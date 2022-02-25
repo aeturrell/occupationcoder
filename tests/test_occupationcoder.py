@@ -23,7 +23,7 @@ class TestOccupationcoder(unittest.TestCase):
         """Set up test fixtures, if any."""
         # The expected cleaned titles to our test data
         self.expected_titles = ['physicist', 'economist', 'ground worker']
-        # The SOC codes that TFIDF is expected to suggest for the three examples
+        # The SOC codes that TFIDF is expected to suggest for three examples
         self.expected_codes = ['242', '311', '212', '215', '211',
                                '353', '412', '215', '242', '211',
                                '242', '533', '243', '912', '323']
@@ -54,20 +54,25 @@ class TestOccupationcoder(unittest.TestCase):
         """ TF-IDF similarity suggestions for categories? """
         df = self.test_df.copy()
         df['clean_title'] = df['job_title'].apply(cl.simple_clean)
-        df['clean_sector'] = df['job_sector'].apply(lambda x: cl.simple_clean(x, known_only=False))
-        df['clean_desc'] = df['job_description'].apply(lambda x: cl.simple_clean(x, known_only=False))
+        df['clean_sector'] = df['job_sector']\
+            .apply(lambda x: cl.simple_clean(x, known_only=False))
+        df['clean_desc'] = df['job_description']\
+            .apply(lambda x: cl.simple_clean(x, known_only=False))
 
         for index, row in df.iterrows():
-            clean = " ".join([row['clean_title'], row['clean_sector'], row['clean_desc']])
+            clean = " ".join([row['clean_title'],
+                              row['clean_sector'],
+                              row['clean_desc']])
             SOC_codes = self.matcher.get_tfidf_match(clean)
             for code in SOC_codes:
                 self.assertIn(code, self.expected_codes)
 
     def test_code_record(self):
         """ Confirm it correctly runs on our example single record """
-        result = self.matcher.code_record(title='Physicist',
-                                          sector='Professional scientific',
-                                          description='Calculations of the universe')
+        result = self.matcher\
+                     .code_record(title='Physicist',
+                                  sector='Professional scientific',
+                                  description='Calculations of the universe')
 
         self.assertEqual(result, '211')
 
@@ -80,14 +85,20 @@ class TestOccupationcoder(unittest.TestCase):
                                           description_column="job_description")
         self.assertEqual(df['SOC_code'].to_list(), ['211', '242', '912'])
 
-    def test_parallel_code_data_frame(self):
-        """Running the included examples from a file."""
-        df = pd.read_csv(os.path.join('tests', 'test_vacancies.csv'))
-        df = self.matcher.parallel_code_data_frame(df,
-                                                   title_column="job_title",
-                                                   sector_column="job_sector",
-                                                   description_column="job_description")
-        self.assertEqual(df['SOC_code'].to_list(), ['211', '242', '912'])
+    # def test_parallel_code_data_frame(self):
+    #     """
+    #     Running the included examples from a file.
+    #     DISABLED because it can't be run through testr, parallel testing
+    #     interferes with parallelism in code
+    #     """
+    #     df = pd.read_csv(os.path.join('tests', 'test_vacancies.csv'))
+    #     df = self.matcher.parallel_code_data_frame(
+    #         df,
+    #         title_column="job_title",
+    #         sector_column="job_sector",
+    #         description_column="job_description"
+    #         )
+    #     self.assertEqual(df['SOC_code'].to_list(), ['211', '242', '912'])
 
     def test_command_line(self):
         """ Test code execution at command line """
@@ -109,15 +120,19 @@ class TestOccupationcoder(unittest.TestCase):
         Does not execute as part of automated tests.
         """
         # Multiply up that dataset to many, many rows so we can test time taken
-        big_df = self.test_df.sample(SAMPLE_SIZE, replace=True, ignore_index=True)
+        big_df = self.test_df.sample(SAMPLE_SIZE,
+                                     replace=True,
+                                     ignore_index=True)
         print("Size of test dataset: {}".format(big_df.shape[0]))
 
         # Time only the actual code assignment process
         proc_tic = time.perf_counter()
-        _ = self.matcher.code_data_frame(big_df,
-                                         title_column="job_title",
-                                         sector_column="job_sector",
-                                         description_column="job_description")
+        _ = self.matcher.code_data_frame(
+            big_df,
+            title_column="job_title",
+            sector_column="job_sector",
+            description_column="job_description"
+            )
         print(_.shape)
         print(_[['job_title', 'SOC_code']].head(5))
         proc_toc = time.perf_counter()
@@ -130,15 +145,18 @@ class TestOccupationcoder(unittest.TestCase):
         Does not execute as part of automated tests.
         """
         # Multiply up that dataset to many, many rows so we can test time taken
-        big_df = self.test_df.sample(SAMPLE_SIZE, replace=True, ignore_index=True)
+        big_df = self.test_df.sample(SAMPLE_SIZE,
+                                     replace=True,
+                                     ignore_index=True)
         print("Size of test dataset: {}".format(big_df.shape[0]))
 
         # Time only the actual code assignment process
         proc_tic = time.perf_counter()
-        _ = self.matcher.parallel_code_data_frame(big_df,
-                                                  title_column="job_title",
-                                                  sector_column="job_sector",
-                                                  description_column="job_description")
+        _ = self.matcher\
+                .parallel_code_data_frame(big_df,
+                                          title_column="job_title",
+                                          sector_column="job_sector",
+                                          description_column="job_description")
         print(_.shape)
         print(_[['job_title', 'SOC_code']].head(5))
         proc_toc = time.perf_counter()

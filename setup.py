@@ -25,7 +25,7 @@ test_requirements = [ ]
 setup(
     author="Arthur Turrell and Jyldyz Djumalieva",
     author_email='',
-    python_requires='>=3.5',
+    python_requires='>=3.6',
     classifiers=[
         'Development Status :: 2 - Pre-Alpha',
         'Intended Audience :: Developers',

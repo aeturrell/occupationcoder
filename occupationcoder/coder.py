@@ -14,6 +14,9 @@ from rapidfuzz import process, fuzz
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
 
+# For preventing windows multiprocessing error
+from multiprocessing import freeze_support
+
 # Relative imports are cool and no one can tell me otherwise
 from .cleaner import simple_clean
 
@@ -227,6 +230,8 @@ class SOCCoder:
 # Define main function. Main operations are placed here to make it possible
 # use multiprocessing in Windows.
 if __name__ == '__main__':
+    freeze_support()
+    
     # Read command line inputs
     inFile = sys.argv[1]
     df = pd.read_csv(inFile)

@@ -1,6 +1,11 @@
 # OS generated files #
 ######################
 .DS_Store
+dask-worker-space/
+
+# Odd project files
+load_speed_test.py
+load_speed_test_results.csv
 
 # Outputs folder
 Outputs/
@@ -94,6 +99,7 @@ target/
 
 # pyenv
 .python-version
+.idea/
 
 # celery beat schedule file
 celerybeat-schedule

@@ -10,13 +10,13 @@ with open('README.rst') as readme_file:
 with open('HISTORY.rst') as history_file:
     history = history_file.read()
 
-requirements = ['pandas',
+requirements = ['numpy',
+                'pandas',
                 'scikit-learn',
                 'nltk',
-                'dask',
-                'beautifulsoup4',
-                'fuzzywuzzy',
-                'python-Levenshtein']
+                'rapidfuzz',
+                'python-Levenshtein',
+                'modin[dask]']
 
 setup_requirements = [ ]
 
@@ -25,7 +25,7 @@ test_requirements = [ ]
 setup(
     author="Arthur Turrell and Jyldyz Djumalieva",
     author_email='',
-    python_requires='>=3.5',
+    python_requires='>=3.6',
     classifiers=[
         'Development Status :: 2 - Pre-Alpha',
         'Intended Audience :: Developers',
@@ -45,7 +45,7 @@ setup(
     include_package_data=True,
     keywords='occupationcoder',
     name='occupationcoder',
-    packages=find_packages(include=['occupationcoder', 'occupationcoder.*']),
+    packages=find_packages(include=['occupationcoder', 'coder.*', './']),
     setup_requires=setup_requirements,
     test_suite='tests',
     tests_require=test_requirements,

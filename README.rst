@@ -26,7 +26,9 @@ website <https://www.ons.gov.uk/methodology/classificationsandstandards/standard
 
 This code originally written by Jyldyz Djumalieva, `Arthur
 Turrell <http://aeturrell.github.io/home>`__, David Copple, James
-Thurgood, and Bradley Speigner. If you use this code please cite:
+Thurgood, and Bradley Speigner. Martin Wood has provided more recent code updates and improvements.
+
+If you use this code please cite:
 
 Turrell, A., Speigner, B., Djumalieva, J., Copple, D., & Thurgood, J.
 (2019). `Transforming Naturally Occurring Text Data Into Economic
